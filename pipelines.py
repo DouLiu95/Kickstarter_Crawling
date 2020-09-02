@@ -199,7 +199,7 @@ class KickMongoPipeline:
         #         else:
         #             pass
 
-        if item['updates_count'][0] !=  '0':
+        if item['updates_count'][0] !=  '0' and len(item['updates_content'])!=0:
             for i in range(int(item['updates_count'][0])):
                 date = Date2(item['updates_date'][i][0])
                 data_updates = {
@@ -216,8 +216,15 @@ class KickMongoPipeline:
                 }
                 table = self.db[self.collection3]
                 table.insert_one(data_updates)
+        if item['updates_count'][0] !=  '0' and len(item['updates_content'])==0:
+            data_updates = {
+                'project_id': item['id'],
+                'updates_count': int(item['updates_count'][0]),
+                'updates_title': 'Error'}
+            table = self.db[self.collection3]
+            table.insert_one(data_updates)
 
-        # data3 = {
+            # data3 = {
         #     'project_id': item['id'],
         #     'updates_url': 'https://www.kickstarter.com' + item['updates_url'],
         #     'updates_count': item['updates_count'],
@@ -229,18 +236,42 @@ class KickMongoPipeline:
         # table = self.db[self.collection3]
         # table.insert_one(data3)
 
-        # if len(item['comments_name'])>=1:
-        #     for i in range(len(item['comments_name'])):
-        #         data_comments = {
-        #             'project_id': item['id'],
-        #             'comments_count': int(item['comments_count'][0]),
-        #             'comments_name': item['comments_name'][i],
-        #             'comments_date': item['comments_date'][i],
-        #             'comments_content': item['comments_content'][i]
-        #
-        #         }
-        #         table = self.db[self.collection4]
-        #         table.insert_one(data_comments)
+        if int(item['comments_count'][0]) != 0:
+            for i in range(len(item['comments_name'])):
+                if len(item['recomments_name_list'][i]) != 0:
+                    for j in range(len(item['recomments_name_list'][i])):
+
+                        data_comments = {
+                            'project_id': item['id'],
+                            'comments_count': int(item['comments_count'][0]),
+                            'comments_name': item['comments_name'][i][0],
+                            'comments_title': item['comments_title'][i][0],
+                            'comments_date': item['comments_date'][i][0],
+                            'comments_content': item['comments_content'][i][0],
+                            'reply_count': len(item['recomments_name_list'][i])+1,
+                            'reply_name':item['recomments_name_list'][i][j][0],
+                            'reply_title': item['recomments_date_list'][i][j][0],
+                            'reply_date': item['recomments_title_list'][i][j][0],
+                            'reply_content': item['recomments_content_list'][i][j][0],
+                        }
+                        table = self.db[self.collection4]
+                        table.insert_one(data_comments)
+                else:
+                    data_comments = {
+                        'project_id': item['id'],
+                        'comments_count': int(item['comments_count'][0]),
+                        'comments_name': item['comments_name'][i][0],
+                        'comments_title': item['comments_title'][i][0],
+                        'comments_date': item['comments_date'][i][0],
+                        'comments_content': item['comments_content'][i][0],
+                        'reply_count': 0,
+                        'reply_name': 'None',
+                        'reply_title': 'None',
+                        'reply_date': 'None',
+                        'reply_content': 'None',
+                    }
+                    table = self.db[self.collection4]
+                    table.insert_one(data_comments)
 
         # data4 = {
         #     'project_id': item['id'],

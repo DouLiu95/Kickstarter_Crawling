@@ -59,7 +59,12 @@ class KickItem(scrapy.Item):
     comments_count = scrapy.Field()
     comments_content = scrapy.Field()
     comments_name = scrapy.Field()
+    comments_title = scrapy.Field()
     comments_date = scrapy.Field()
+    recomments_name_list = scrapy.Field()
+    recomments_date_list = scrapy.Field()
+    recomments_title_list = scrapy.Field()
+    recomments_content_list = scrapy.Field()
 
     #community
     community_topcity_city = scrapy.Field()

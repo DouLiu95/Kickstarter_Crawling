@@ -15,7 +15,8 @@ import requests
 import json
 import logging
 import random
-
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 # Scrapy 内置的 Downloader Middleware 为 Scrapy 供了基础的功能，
 # 定义一个类，其中（object）可以不写，效果一样
 class SimpleProxyMiddleware(object):
@@ -112,13 +113,61 @@ class KickSpiderMiddleware:
         chrome_options.add_argument('--no-sandbox')
         prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         chrome_options.add_experimental_option("prefs", prefs)
+
+        if 'post' in request.url:
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,
+                                           executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+            try:
+                self.driver.get(request.url)
+                self.driver.implicitly_wait(1)
+                time.sleep(1)
+                button = ".//*[@id='project-post-interface']/div/div/div/div/div/button"
+                while True:
+                    if len(self.driver.find_elements_by_xpath(button))> 0:
+                        self.driver.find_element_by_xpath(button).click()
+                        time.sleep(2)
+                    else:
+                        print("No Button")
+                        break
+                html = self.driver.page_source
+                self.driver.quit()
+                return scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
+                                                request =request)
+
+            except:
+                print( "get updates data failed")
+        elif 'comments' in request.url:
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,
+                                           executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+            try:
+                self.driver.get(request.url)
+                self.driver.implicitly_wait(1)
+                time.sleep(1)
+                button = ".//*[@id='react-project-comments']/div/button"
+                while True:
+                    if len(self.driver.find_elements_by_xpath(button)) > 0:
+                        self.driver.find_element_by_xpath(button).click()
+                        time.sleep(2)
+                    else:
+                        print("No Button")
+                        break
+                html = self.driver.page_source
+                self.driver.quit()
+                return scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
+                                                request=request)
+
+            except:
+                print("get updates data failed")
+
+
+        else:
         # 指定谷歌浏览器路径
-        self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
-        self.driver.get(request.url)
-        time.sleep(1)
-        html = self.driver.page_source
-        self.driver.quit()
-        return scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+            self.driver.get(request.url)
+            time.sleep(1)
+            html = self.driver.page_source
+            self.driver.quit()
+            return scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
                                             request=request)
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)

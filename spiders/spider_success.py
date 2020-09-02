@@ -16,7 +16,7 @@ import pandas as pd
 # 1 6 7 16
 file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\art_link.csv'
 df = pd.read_csv(file)
-urls = list(df.loc[0:500,'link'])
+urls = list(df.loc[501:1000,'link'])
 
 # class DmozSpider(scrapy.Spider):
 #     name = "dmoz"
@@ -389,29 +389,100 @@ class KickSpider(scrapy.Spider):
         # item['updates_title'] = response.xpath(".//*[@id='project-post-interface']/div/div/div/div/a/div/article/header/h2/text()").extract()
         # item['updates_date'] = response.xpath(".//*[@id='project-post-interface']/div/div/div/div/a/div/article/header/div[2]/div[2]/span//text()").extract()
 
-        # comments_url = 'https://www.kickstarter.com' + item['comments_url']
-        # yield scrapy.Request(comments_url, callback=self.parse_comments, meta={'item':item})
+        comments_url = 'https://www.kickstarter.com' + item['comments_url']
+        yield scrapy.Request(comments_url, callback=self.parse_comments, meta={'item':item})
 
+        # if len(item['community_url']) == 1:
+        #     community_url =  'https://www.kickstarter.com' +item['community_url'][0]
+        #     yield scrapy.Request(community_url, callback=self.parse_community, meta={'item':item})
+        # else:
+        #     yield item
+
+    def parse_comments(self, response):
+        item = response.meta['item']
+
+        ################
+        item['comments_count'] = response.xpath(".//*[@id='comments-emoji']/span/data").extract()
+        content = []
+        title = []
+        date = []
+        name = []
+        reply_contents = []
+        reply_titles = []
+        reply_dates = []
+        reply_names = []
+
+        if int(item['comments_count'][0]) != 0:
+            for sel in response.xpath(".//*[@id='react-project-comments']/ul/li"):
+                if sel.xpath("div[1]/p/a/text()").extract() == ['Show the comment.']:
+                    con = ['Canceled']
+                    tit = ['Canceled']
+                    dat = ['Canceled']
+                    nam = ['Canceled']
+                else:
+                    con = sel.xpath("string(div/div[2]/div/p)").extract()
+
+                    tit = sel.xpath("div/div[1]/div/div/span[2]/span/text()").extract()
+                    if tit == []:
+                        tit = ['None']
+                    dat = sel.xpath(
+                        "div/div[1]/div/div/a/time/text()").extract()
+                    nam = sel.xpath(
+                        "div/div[1]/div/div/span[1]/text()").extract()
+
+                    reply_content = []
+                    reply_title = []
+                    reply_date = []
+                    reply_name = []
+                    if len(sel.xpath("div[2]/ul/li/div").extract())!=0:
+                        for reply in sel.xpath("div[2]/ul/li/div"):
+                            if reply.xpath("p/a/text()").extract() == ['Show the comment.']:
+                                reply_nam = ['Canceled']
+                                reply_tit = ['Canceled']
+                                reply_dat = ['Canceled']
+                                reply_con = ['Canceled']
+                            else:
+                                reply_nam = reply.xpath("div[1]/div/div/span[1]/text()").extract()
+                                reply_tit = reply.xpath("div[1]/div/div/span[2]/span/text()").extract()
+                                if reply_tit == []:
+                                    reply_tit = ['None']
+                                reply_dat = reply.xpath("div[1]/div/div/a/time").extract()
+                                reply_con = reply.xpath("string(div[2]/div/p)").extract()
+                            reply_content.append(reply_con)
+                            reply_title.append(reply_tit)
+                            reply_date.append(reply_dat)
+                            reply_name.append(reply_nam)
+
+                content.append(con)
+                title.append(tit)
+                date.append(dat)
+                name.append(nam)
+                reply_contents.append(reply_content)
+                reply_titles.append(reply_title)
+                reply_dates.append(reply_date)
+                reply_names.append(reply_name)
+            item['comments_content'] = content
+            item['comments_title'] = title
+            item['comments_date'] = date
+            item['comments_name'] = name
+            item['recomments_name_list'] = reply_names
+            item['recomments_date_list'] = reply_dates
+            item['recomments_title_list'] = reply_titles
+            item['recomments_content_list'] = reply_contents
+        ################
+
+        # item['comments_count'] = response.xpath(".//*[@id='comments-emoji']/span/data/text()").extract()
+        # item['comments_name'] = response.xpath(".//*[@id='react-project-comments']/ul/li/div[1]/div[1]/div/div/span[1]/text() | .//*[@id='react-project-comments']/ul/li/div[2]/ul/li/div/div[1]/div/div/span[1]/text()").extract()
+        # item['comments_date'] = response.xpath(".//*[@id='react-project-comments']/ul/li/div/div[1]/div/div/a/time/text() | .//*[@id='react-project-comments']/ul/li/div[2]/ul/li/div/div[1]/div/div/a/time/text()").extract()
+        # item['comments_content'] = response.xpath(".//*[@id='react-project-comments']/ul/li/div/div[2]/div/p/text() | .//*[@id='react-project-comments']/ul/li/div[2]/ul/li/div/div[2]/div/p/text()").extract()
+
+        # item['updates_count'] = response.xpath(".//*[@id='updates-emoji']/span/text()").extract()
+        print(item['community_url'])
         if len(item['community_url']) == 1:
             community_url =  'https://www.kickstarter.com' +item['community_url'][0]
             yield scrapy.Request(community_url, callback=self.parse_community, meta={'item':item})
         else:
             yield item
-
-    # def parse_comments(self, response):
-    #     item = response.meta['item']
-    #     item['comments_count'] = response.xpath(".//*[@id='comments-emoji']/span/data/text()").extract()
-    #     item['comments_name'] = response.xpath(".//*[@id='react-project-comments']/ul/li/div[1]/div[1]/div/div/span[1]/text() | .//*[@id='react-project-comments']/ul/li/div[2]/ul/li/div/div[1]/div/div/span[1]/text()").extract()
-    #     item['comments_date'] = response.xpath(".//*[@id='react-project-comments']/ul/li/div/div[1]/div/div/a/time/text() | .//*[@id='react-project-comments']/ul/li/div[2]/ul/li/div/div[1]/div/div/a/time/text()").extract()
-    #     item['comments_content'] = response.xpath(".//*[@id='react-project-comments']/ul/li/div/div[2]/div/p/text() | .//*[@id='react-project-comments']/ul/li/div[2]/ul/li/div/div[2]/div/p/text()").extract()
-    #
-    #     # item['updates_count'] = response.xpath(".//*[@id='updates-emoji']/span/text()").extract()
-    #     print(item['community_url'])
-    #     if len(item['community_url']) == 1:
-    #         community_url =  'https://www.kickstarter.com' +item['community_url'][0]
-    #         yield scrapy.Request(community_url, callback=self.parse_community, meta={'item':item})
-    #     else:
-    #         yield item
 
     def parse_community(self, response):
         item = response.meta['item']
