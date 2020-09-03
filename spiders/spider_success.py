@@ -16,7 +16,7 @@ import pandas as pd
 # 1 6 7 16
 file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\art_link.csv'
 df = pd.read_csv(file)
-urls = list(df.loc[501:1000,'link'])
+urls = list(df.loc[1001:2000,'link'])
 
 # class DmozSpider(scrapy.Spider):
 #     name = "dmoz"
@@ -75,9 +75,9 @@ class KickSpider(scrapy.Spider):
         # # #     "https://www.kickstarter.com/projects/256270160/warrior-cats-enamel-pins?ref=discovery_category_ending_soon",
         # # #     "https://www.kickstarter.com/projects/1110317881/pms-bites-take-the-bite-out-of-pms?ref=discovery_category_ending_soon",
         # # #     "https://www.kickstarter.com/projects/50545525/union-webseries?ref=discovery_category_ending_soon",
-        #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
-        #     "https://www.kickstarter.com/projects/997998703/gravel-travel-system?ref=discovery_tag",
-        #     "https://www.kickstarter.com/projects/wtfism/general-newsense-having-fun-creatively-corrupting-corruption?ref=discovery_category_ending_soon"
+        # #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/997998703/gravel-travel-system?ref=discovery_tag",
+        #     "https://www.kickstarter.com/projects/sugarbox/sparkle-ice-cream-pins/?ref=discovery_category_ending_soon"
         # ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
@@ -402,7 +402,7 @@ class KickSpider(scrapy.Spider):
         item = response.meta['item']
 
         ################
-        item['comments_count'] = response.xpath(".//*[@id='comments-emoji']/span/data").extract()
+        item['comments_count'] = response.xpath(".//*[@id='comments-emoji']/span/data/text()").extract()
         content = []
         title = []
         date = []
@@ -446,7 +446,7 @@ class KickSpider(scrapy.Spider):
                                 reply_tit = reply.xpath("div[1]/div/div/span[2]/span/text()").extract()
                                 if reply_tit == []:
                                     reply_tit = ['None']
-                                reply_dat = reply.xpath("div[1]/div/div/a/time").extract()
+                                reply_dat = reply.xpath("div[1]/div/div/a/time/text()").extract()
                                 reply_con = reply.xpath("string(div[2]/div/p)").extract()
                             reply_content.append(reply_con)
                             reply_title.append(reply_tit)

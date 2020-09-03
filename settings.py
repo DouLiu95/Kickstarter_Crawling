@@ -16,7 +16,7 @@ USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36
 
 DOWNLOADER_MIDDLEWARES = {
     'kick.middlewares.KickSpiderMiddleware': 543,
-    # 'kick.middlewares.SimpleProxyMiddleware': 100,
+    'kick.middlewares.SimpleProxyMiddleware': 100,
 }
 ITEM_PIPELINES = {
    # 'tutorial.pipelines.QQNewsPipeline': 300,
@@ -32,7 +32,7 @@ MONGO_DB = "kick"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
-PROXY_URL = 'http://dps.kdlapi.com/api/getdps/?orderid=939895276160473&num=10&pt=1&format=json&sep=1'
+PROXY_URL = 'https://dps.kdlapi.com/api/getdps/?orderid=949911939411124&num=10&pt=1&format=json&sep=1'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

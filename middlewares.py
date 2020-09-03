@@ -33,7 +33,7 @@ class SimpleProxyMiddleware(object):
                 i = random.choice(range(len(p)))
                 # proxy = '{}:{}'.format(p[i].get('ip'), p[i].get('port'))
                 proxy = p[i]
-                print('get proxy ...')
+                print('get proxy ...',proxy)
                 ip = {"http": "http://" + proxy, "https": "https://" + proxy}
                 r = requests.get("https://www.kickstarter.com", proxies=ip, timeout=4)
                 if r.status_code == 200:
@@ -43,10 +43,11 @@ class SimpleProxyMiddleware(object):
             return self.get_random_proxy()
 
     def process_request(self, request, spider):
-        proxy = self.get_random_proxy()
-        if proxy:
-            self.logger.debug('======' + '使用代理 ' + str(proxy) + "======")
-            request.meta['proxy'] = 'https://{proxy}'.format(proxy=proxy)
+        if 'ref=' in request.url or 'comments' in request.url or 'post' in request.url:
+            proxy = self.get_random_proxy()
+            if proxy:
+                self.logger.debug('======' + '使用代理 ' + str(proxy) + "======")
+                request.meta['proxy'] = 'https://{proxy}'.format(proxy=proxy)
 
     def process_response(self, request, response, spider):
         if response.status != 200:

@@ -154,7 +154,10 @@ class KickMongoPipeline:
             'creator_created_count' : creator_create,
             'creator_backed_count' : creator_back,
             'creator_website' : creator_website,
+            'faq_count': int(item['faq_count'][0]),
+            'updates_count': int(item['updates_count'][0]),
 
+            'comments_count': int(item['comments_count'][0]),
             'faq_url':'https://www.kickstarter.com/' + item['faq_url'],
             'updates_url': 'https://www.kickstarter.com' + item['updates_url'],
             'comments_url': 'https://www.kickstarter.com' + item['comments_url'],
@@ -248,10 +251,10 @@ class KickMongoPipeline:
                             'comments_title': item['comments_title'][i][0],
                             'comments_date': item['comments_date'][i][0],
                             'comments_content': item['comments_content'][i][0],
-                            'reply_count': len(item['recomments_name_list'][i])+1,
+                            'reply_count': len(item['recomments_name_list'][i]),
                             'reply_name':item['recomments_name_list'][i][j][0],
-                            'reply_title': item['recomments_date_list'][i][j][0],
-                            'reply_date': item['recomments_title_list'][i][j][0],
+                            'reply_title': item['recomments_title_list'][i][j][0],
+                            'reply_date': item['recomments_date_list'][i][j][0],
                             'reply_content': item['recomments_content_list'][i][j][0],
                         }
                         table = self.db[self.collection4]
