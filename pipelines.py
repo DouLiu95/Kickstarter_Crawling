@@ -132,7 +132,7 @@ class KickMongoPipeline:
         if len(item['updates_count']) == 0:
             updates_count = 0
         else:
-            updates_count = int(item['faq_count'][0])
+            updates_count = int(item['updates_count'][0])
 
         if len(item['comments_count']) == 0:
             comments_count = 0

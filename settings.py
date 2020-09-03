@@ -32,8 +32,8 @@ MONGO_DB = "kick"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
-PROXY_URL = 'https://dps.kdlapi.com/api/getdps/?orderid=949911939411124&num=10&pt=1&format=json&sep=1'
-
+# PROXY_URL = 'https://dps.kdlapi.com/api/getdps/?orderid=949911939411124&num=10&pt=1&format=json&sep=1'
+PROXY_URL = "https://proxy6.net/api/ad42a35cb3-e8fe6b14d1-6aca5e500f/getproxy"
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 # import logging

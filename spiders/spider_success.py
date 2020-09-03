@@ -18,37 +18,6 @@ file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\art_link.csv'
 df = pd.read_csv(file)
 urls = list(df.loc[1001:2000,'link'])
 
-# class DmozSpider(scrapy.Spider):
-#     name = "dmoz"
-#     allowed_domains = ["dmoz-odp.org"]
-#     start_urls = [
-#         "https://www.kickstarter.com/projects/papershredder/sugar-high-birthday-card?ref=discovery_category_ending_soon"
-#     ]
-#     # def parse(self, response):
-#     #     for href in response.css("ul.directory.dir-col > li > a::attr('href')"):
-#     #         url = response.urljoin(response.url, href.extract())
-#     #         yield scrapy.Request(url, callback=self.parse_dir_contents)
-#     def __init__(self):
-#         self.browser = webdriver.Chrome(chrome_options=chorme_options)
-#         super().__init__()
-#
-#     def start_requests(self):
-#         url = "https://www.kickstarter.com/projects/papershredder/sugar-high-birthday-card?ref=discovery_category_ending_soon"
-#         response = scrapy.Request(url, callback=self.parse)
-#         yield response
-#
-#         # 整个爬虫结束后关闭浏览器
-#     def close(self, spider):
-#         self.browser.quit()
-#
-#     def parse(self, response):
-#         for sel in response.xpath(".//*[@id='site-list-content']/div"):
-#             # 实例化 DmozItem()
-#             item = DmozItem()
-#             item['title'] = sel.xpath('div[3]/a/div/text()').extract()
-#             item['link'] = sel.xpath('div[3]/a/@href').extract()
-#             item['desc'] = sel.xpath('div[3]/div/text()').extract()
-#             yield item
 
 class KickSpider(scrapy.Spider):
     name = "kick"
@@ -76,8 +45,8 @@ class KickSpider(scrapy.Spider):
         # # #     "https://www.kickstarter.com/projects/1110317881/pms-bites-take-the-bite-out-of-pms?ref=discovery_category_ending_soon",
         # # #     "https://www.kickstarter.com/projects/50545525/union-webseries?ref=discovery_category_ending_soon",
         # #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/997998703/gravel-travel-system?ref=discovery_tag",
-        #     "https://www.kickstarter.com/projects/sugarbox/sparkle-ice-cream-pins/?ref=discovery_category_ending_soon"
+        # #     "https://www.kickstarter.com/projects/541894646/adventure-time-cmon-grab-your-friends-posters?ref=discovery_tag",
+        #     "https://www.kickstarter.com/projects/keikiiart/creepy-cute-cryptid-pins-pastel-remix-by-keikiiart/?ref=discovery_category_ending_soon"
         # ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
