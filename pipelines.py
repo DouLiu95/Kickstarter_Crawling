@@ -125,6 +125,21 @@ class KickMongoPipeline:
             backers = int(0)
         else:
             backers = int(item['backers_count'][0])
+        if len(item['faq_count']) == 0:
+            faq_count = 0
+        else:
+            faq_count = int(item['faq_count'][0])
+        if len(item['updates_count']) == 0:
+            updates_count = 0
+        else:
+            updates_count = int(item['faq_count'][0])
+
+        if len(item['comments_count']) == 0:
+            comments_count = 0
+        else:
+            comments_count = int(item['comments_count'][0])
+
+
         data={
             'project_id': item['id'],
             'state': item['state'],
@@ -154,10 +169,10 @@ class KickMongoPipeline:
             'creator_created_count' : creator_create,
             'creator_backed_count' : creator_back,
             'creator_website' : creator_website,
-            'faq_count': int(item['faq_count'][0]),
-            'updates_count': int(item['updates_count'][0]),
+            'faq_count':faq_count,
+            'updates_count': updates_count,
 
-            'comments_count': int(item['comments_count'][0]),
+            'comments_count': comments_count,
             'faq_url':'https://www.kickstarter.com/' + item['faq_url'],
             'updates_url': 'https://www.kickstarter.com' + item['updates_url'],
             'comments_url': 'https://www.kickstarter.com' + item['comments_url'],
