@@ -28,14 +28,14 @@ class SimpleProxyMiddleware(object):
         try:
             response = requests.get(self.proxy_url)
             if response.status_code == 200:
-                p = json.loads(response.text)
-                p = p.get('data').get('proxy_list')
-                i = random.choice(range(len(p)))
+                p = json.loads(response.text).get('data').get('proxy_list')
+                # p = p.get('data').get('proxy_list')
+                # i = random.choice(range(len(p)))
                 # proxy = '{}:{}'.format(p[i].get('ip'), p[i].get('port'))
-                proxy = p[i]
+                proxy = p[random.choice(range(len(p)))]
                 print('get proxy ...',proxy)
                 ip = {"http": "http://" + proxy, "https": "https://" + proxy}
-                r = requests.get("https://www.kickstarter.com", proxies=ip, timeout=4)
+                r = requests.get("https://www.kickstarter.com", proxies=ip, timeout=8)
                 if r.status_code == 200:
                     return proxy
         except:
