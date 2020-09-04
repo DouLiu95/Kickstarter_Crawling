@@ -16,7 +16,7 @@ import pandas as pd
 # 1 6 7 16
 file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\art_link.csv'
 df = pd.read_csv(file)
-urls = list(df.loc[1001:2000,'link'])
+urls = list(df.loc[2002:2003,'link'])
 
 
 class KickSpider(scrapy.Spider):
@@ -29,25 +29,25 @@ class KickSpider(scrapy.Spider):
     # ]
 
     def start_requests(self):
-        # urls = [
-        # #     # "https://www.kickstarter.com/projects/papershredder/sugar-high-birthday-card?ref=discovery_category_ending_soon",
-        # # # "https://www.kickstarter.com/projects/artenvielfalt-ac/bluh-und-bienenwiese-in-der-aachener-region?ref=discovery_category_ending_soon",
-        # # # "https://www.kickstarter.com/projects/sparrgames/keep-an-eye-out-make-100?ref=discovery_category_ending_soon",
-        # # # "https://www.kickstarter.com/projects/1286014/love-yourself-photography-book?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/unbornartstudios/rave-pin-series-1?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/saphirrannart/monsters-of-fantasy?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/trupotreats/vegan-crunch-bars?ref=recommendation-no-result-discoverpage-4",
-        # # #     "https://www.kickstarter.com/projects/ksscomics/tales-from-neroesville-issues-1-2-and-3?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/valimor/makaidos-swiss-automatic-movt-watches-and-patented?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/pigeonoverlord/pigeon-overlord-geeky-unisex-shirts?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/256270160/warrior-cats-enamel-pins?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/1110317881/pms-bites-take-the-bite-out-of-pms?ref=discovery_category_ending_soon",
-        # # #     "https://www.kickstarter.com/projects/50545525/union-webseries?ref=discovery_category_ending_soon",
+        urls = [
+        #     # "https://www.kickstarter.com/projects/papershredder/sugar-high-birthday-card?ref=discovery_category_ending_soon",
+        # # "https://www.kickstarter.com/projects/artenvielfalt-ac/bluh-und-bienenwiese-in-der-aachener-region?ref=discovery_category_ending_soon",
+        # # "https://www.kickstarter.com/projects/sparrgames/keep-an-eye-out-make-100?ref=discovery_category_ending_soon",
+        # # "https://www.kickstarter.com/projects/1286014/love-yourself-photography-book?ref=discovery_category_ending_soon",
         # #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/541894646/adventure-time-cmon-grab-your-friends-posters?ref=discovery_tag",
-        #     "https://www.kickstarter.com/projects/keikiiart/creepy-cute-cryptid-pins-pastel-remix-by-keikiiart/?ref=discovery_category_ending_soon"
-        # ]
+        # #     "https://www.kickstarter.com/projects/unbornartstudios/rave-pin-series-1?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/saphirrannart/monsters-of-fantasy?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/trupotreats/vegan-crunch-bars?ref=recommendation-no-result-discoverpage-4",
+        # #     "https://www.kickstarter.com/projects/ksscomics/tales-from-neroesville-issues-1-2-and-3?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/valimor/makaidos-swiss-automatic-movt-watches-and-patented?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/pigeonoverlord/pigeon-overlord-geeky-unisex-shirts?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/256270160/warrior-cats-enamel-pins?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/1110317881/pms-bites-take-the-bite-out-of-pms?ref=discovery_category_ending_soon",
+        # #     "https://www.kickstarter.com/projects/50545525/union-webseries?ref=discovery_category_ending_soon",
+        #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
+        #     "https://www.kickstarter.com/projects/541894646/adventure-time-cmon-grab-your-friends-posters?ref=discovery_tag",
+            "https://www.kickstarter.com/projects/nightlights/cheeseburger-cat-pins?ref=discovery_category_ending_soon"
+        ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
             # def __init__(self):
@@ -77,19 +77,23 @@ class KickSpider(scrapy.Spider):
 
                 item['start_date'] = \
                     response.xpath(
-                        ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[4]/p/time[1]/text()").extract()[
-                        0]
+                        ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[4]/p/time[1]/text()").extract()
+                if not item['start_date']:
+                    item['start_date'] = 'None'
                 item['end_date'] = \
                     response.xpath(
-                        ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[4]/p/time[2]/text()").extract()[
-                        0]
+                        ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[4]/p/time[2]/text()").extract()
+                if not item['end_date']:
+                    item['end_date'] = 'None'
 
-                item['pledged'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/div[2]/span[1]/span/text()").extract()[
-                    0]
+                item['pledged'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/div[2]/span[1]/span/text()").extract()
+                if not item['pledged']:
+                    item['pledged'] = 'None'
                 item['goal'] = \
                     response.xpath(
-                        ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/span/span[2]/span/text()").extract()[
-                        0]
+                        ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/span/span[2]/span/text()").extract()
+                if not item['goal']:
+                    item['goal'] = 'None'
                 item['backers_count'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[2]/div/span/text()").extract()
 
                 item['creator_url'] = item['link'] + '/creator_bio'
@@ -106,13 +110,17 @@ class KickSpider(scrapy.Spider):
                 item['video'] = response.xpath(".//*[@id='react-campaign']/descendant::video/source/@src").extract()
                 item['pledge_money'] = response.xpath(
                     ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[2]/div/ol/li/div[2]/h2/span[1]/text()").extract()
-                item['pledge_name'] = response.xpath(
-                    ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[2]/div/ol/li/div[2]/h3/text()").extract()
+                # item['pledge_name'] = response.xpath(
+                #     ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[2]/div/ol/li/div[2]/h3/text()").extract()
                 description = []
                 ship = []
                 backers = []
                 delivery = []
+                name = []
                 for sel in response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[2]/div/ol/li"):
+                    new_name = sel.xpath("div[2]/h3/text()").extract()
+                    if not new_name:
+                        new_name = ['None']
                     new_description = sel.xpath(
                         "string(.//div[@class='pledge__reward-description pledge__reward-description--expanded'])").extract()
                     # new_include = sel.xpath("div[2]/div[1]/ul/li/text()").extract()
@@ -121,6 +129,7 @@ class KickSpider(scrapy.Spider):
                     new_ship = sel.xpath("div[2]/div[2]/div[2]/span[2]/text()").extract()
                     new_delivery = sel.xpath("div[2]/div[2]/div[1]/span[2]/time/text()").extract()
                     new_backers = space_number(new_backers)[0]
+                    name.append(new_name)
                     description.append(new_description)
                     # include.append((new_include))
                     backers.append(new_backers)
@@ -145,7 +154,7 @@ class KickSpider(scrapy.Spider):
                 # item['pledge_backer'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/div[3]/span/text()").extract()
                 item['pledge_ship'] = ship
                 item['pledge_backer'] = backers
-
+                item['pledge_name'] = name
                 item['story'] = response.xpath("string(.//div[@class='rte__content'])").extract()
                 item['risks'] = response.xpath("string(.//div[@id='risks-and-challenges'])").extract()
                 item['environmental_commitments'] = response.xpath(
@@ -186,11 +195,19 @@ class KickSpider(scrapy.Spider):
 
             # item['subcategory'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[1]/div/div/a[2]/text())").extract()[0]
             item['subcategory'] = response.xpath(".//a[@class='grey-dark mr3 nowrap type-12']/text()").extract()[1].replace('\n','')
-            item['start_date'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div/p/time[1]/text()").extract()[0]
-            item['end_date'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div/p/time[2]/text()").extract()[0]
+            item['start_date'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div/p/time[1]/text()").extract()
+            if not item['start_date']:
+                item['start_date'] = 'None'
+            item['end_date'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div/p/time[2]/text()").extract()
+            if not item['end_date']:
+                item['end_date'] = 'None'
 
-            item['pledged'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/h3/span/text())").extract()[0]
-            item['goal'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/div/span/text()").extract()[0]
+            item['pledged'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/h3/span/text())").extract()
+            if not item['pledged']:
+                item['pledged'] = 'None'
+            item['goal'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/div/span/text()").extract()
+            if not item['goal']:
+                item['goal'] = 'None'
             item['backers_count'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[2]/h3/text())").extract()
 
             item['creator_url'] = response.xpath(".//*[@id='content-wrap']/section/div[3]/div[2]/div/div[2]/div/div[2]/div[1]/div/div[2]/div[1]/a/@href").extract()[0]
@@ -207,24 +224,31 @@ class KickSpider(scrapy.Spider):
             item['video'] = response.xpath(".//*[@id='react-campaign']/descendant::video/source/@src").extract()
 
             item['pledge_money'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/h2/span[1]/text()").extract()
-            item['pledge_name'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/h3/text()").extract()
+            # item['pledge_name'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/h3/text()").extract()
             # item['pledge_description'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/div[1]/p/text()").extract()
+            name = []
             description = []
             ship = []
             backers = []
             delivery = []
             for sel in response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li"):
+                new_name = sel.xpath("div[2]/h3/text()").extract()
+                if not new_name:
+                    new_name = ['None']
+
                 new_description = sel.xpath("string(.//div[@class='pledge__reward-description pledge__reward-description--expanded'])").extract()
                 # new_include = sel.xpath("div[2]/div[1]/ul/li/text()").extract()
                 new_backers = sel.xpath(".//span[@class='block pledge__backer-count']/text()|.//span[@class='pledge__backer-count']/text()").extract()
                 new_ship = sel.xpath("div[2]/div[2]/div[2]/span[2]/text()").extract()
                 new_delivery = sel.xpath("div[2]/div[2]/div[1]/span[2]/time/text()").extract()
                 new_backers = space_number(new_backers)[0]
+                name.append(new_name)
                 description.append(new_description)
                 # include.append((new_include))
                 backers.append( new_backers)
                 ship.append(new_ship)
                 delivery.append(new_delivery)
+            item['pledge_name'] = name
             item['pledge_description'] = description
             # item['pledge_includes'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/div[1]/ul/li/text()").extract()
             # item['pledge_includes']=include

@@ -139,7 +139,10 @@ class KickMongoPipeline:
         else:
             comments_count = int(item['comments_count'][0])
 
-
+        if item['start_date'] != 'None':
+            start_date = Date(item['start_date'][0])
+        if item['end_date'] != 'None':
+            end_date = Date(item['end_date'][0])
         data={
             'project_id': item['id'],
             'state': item['state'],
@@ -148,8 +151,8 @@ class KickMongoPipeline:
             'project_description':item['project_description'],
             'project_location':item['project_location'],
             'subcategory':item['subcategory'],
-            'start_date': Date( item['start_date']),
-            'end_date': Date(item['end_date']),
+            'start_date': start_date,
+            'end_date': end_date,
 
             'creator':item['creator'],
             'creator_url': 'https://www.kickstarter.com' + item['creator_url'],
@@ -393,7 +396,7 @@ class KickMongoPipeline:
                 else:
 
                     description = re.sub(pattern_story,'\n',item['pledge_description'][i][0])
-                pledge_name = re.sub(pattern_story,'',item['pledge_name'][i])
+                pledge_name = re.sub(pattern_story,'',item['pledge_name'][i][0])
                 # if len(item['pledge_includes'][i])==0:
                 #     include = 'None'
                 # else:
@@ -570,15 +573,15 @@ def Date(Date):
     list = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     for number,mon in enumerate(list):
         if mon in Date:
-            new_date = re.sub(mon,str(number+1),Date)
-    date = re.sub(' ','/',new_date)
+            Date = re.sub(mon,str(number+1),Date)
+    date = re.sub(' ','/',Date)
     return date
 
 def Date2(Date):
     list = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     for number, mon in enumerate(list):
         if mon in Date:
-            new_date = re.sub(mon, str(number + 1), Date)
-    date = re.sub(' ', '/', new_date)
+            Date = re.sub(mon, str(number + 1), Date)
+    date = re.sub(' ', '/', Date)
     date=date.replace(',','')
     return date
