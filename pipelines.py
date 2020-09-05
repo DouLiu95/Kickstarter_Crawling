@@ -124,20 +124,20 @@ class KickMongoPipeline:
         if len(item['backers_count']) == 0:
             backers = int(0)
         else:
-            backers = int(item['backers_count'][0])
+            backers = int(space_number( item['backers_count'])[0])
         if len(item['faq_count']) == 0:
             faq_count = 0
         else:
-            faq_count = int(item['faq_count'][0])
+            faq_count = int(space_number(item['faq_count'])[0])
         if len(item['updates_count']) == 0:
             updates_count = 0
         else:
-            updates_count = int(item['updates_count'][0])
+            updates_count = int(space_number(item['updates_count'])[0])
 
         if len(item['comments_count']) == 0:
             comments_count = 0
         else:
-            comments_count = int(item['comments_count'][0])
+            comments_count = int(space_number(item['comments_count'])[0])
 
         if item['start_date'] != 'None':
             start_date = Date(item['start_date'][0])
@@ -190,7 +190,7 @@ class KickMongoPipeline:
                 faq_question = item['faq_question'][i].replace("\n", "")
                 data_faq = {
                     'project_id': item['id'],
-                    'faq_count': int(item['faq_count'][0]),
+                    'faq_count': int(space_number(item['faq_count'])[0]),
 
                     'faq_question': faq_question,
                     'faq_answer': item['faq_answer'][i]
@@ -221,11 +221,11 @@ class KickMongoPipeline:
         #             pass
 
         if item['updates_count'][0] !=  '0' and len(item['updates_content'])!=0:
-            for i in range(int(item['updates_count'][0])):
+            for i in range(len(item['updates_title'])):
                 date = Date2(item['updates_date'][i][0])
                 data_updates = {
                     'project_id': item['id'],
-                    'updates_count': int(item['updates_count'][0]),
+                    'updates_count': int(space_number(item['updates_count'])[0]),
                     'updates_title': item['updates_title'][i][0],
                     'updates_creator': item['updates_creator'][i][0],
                     'updates_date':date,
@@ -240,7 +240,7 @@ class KickMongoPipeline:
         if item['updates_count'][0] !=  '0' and len(item['updates_content'])==0:
             data_updates = {
                 'project_id': item['id'],
-                'updates_count': int(item['updates_count'][0]),
+                'updates_count': int(space_number(item['updates_count'])[0]),
                 'updates_title': 'Error'}
             table = self.db[self.collection3]
             table.insert_one(data_updates)
@@ -264,7 +264,7 @@ class KickMongoPipeline:
 
                         data_comments = {
                             'project_id': item['id'],
-                            'comments_count': int(item['comments_count'][0]),
+                            'comments_count': int(space_number(item['comments_count'])[0]),
                             'comments_name': item['comments_name'][i][0],
                             'comments_title': item['comments_title'][i][0],
                             'comments_date': item['comments_date'][i][0],
@@ -280,7 +280,7 @@ class KickMongoPipeline:
                 else:
                     data_comments = {
                         'project_id': item['id'],
-                        'comments_count': int(item['comments_count'][0]),
+                        'comments_count': int(space_number(item['comments_count'])[0]),
                         'comments_name': item['comments_name'][i][0],
                         'comments_title': item['comments_title'][i][0],
                         'comments_date': item['comments_date'][i][0],
@@ -316,11 +316,11 @@ class KickMongoPipeline:
             for i in range(len(item['community_topcity_city'])):
                 city = item['community_topcity_city'][i]
                 country = item['community_topcity_country'][i]
-                backers = int(topcity_backers[i])
+                backers = int(space_number(topcity_backers)[i])
                 if len(item['community_topcountry_country']) > i:
 
                     country2 = item['community_topcountry_country'][i]
-                    backers2 = int(topcountry_backers[i])
+                    backers2 = int(space_number(topcountry_backers)[i])
                 else:
                     country2 = "None"
                     backers2 = int(0)
