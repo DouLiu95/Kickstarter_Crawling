@@ -16,7 +16,7 @@ import pandas as pd
 # 1 6 7 16
 file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\art_link.csv'
 df = pd.read_csv(file)
-urls = list(df.loc[2004:4000,'link'])
+urls = list(df.loc[7000:10000,'link'])
 
 
 class KickSpider(scrapy.Spider):
@@ -405,7 +405,7 @@ class KickSpider(scrapy.Spider):
         reply_dates = []
         reply_names = []
 
-        if int(item['comments_count'][0]) != 0:
+        if int(space_number(item['comments_count'])[0]) != 0:
             for sel in response.xpath(".//*[@id='react-project-comments']/ul/li"):
                 if sel.xpath("div[1]/p/a/text()").extract() == ['Show the comment.']:
                     con = ['Canceled']

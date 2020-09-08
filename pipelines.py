@@ -143,6 +143,21 @@ class KickMongoPipeline:
             start_date = Date(item['start_date'][0])
         if item['end_date'] != 'None':
             end_date = Date(item['end_date'][0])
+
+        if not item['creator_location']:
+            creator_location = 'None'
+        else:
+            creator_location = item['creator_location'][0]
+
+        if not item['creator_description']:
+            creator_description = 'None'
+        else:
+            creator_description = item['creator_description'][0]
+
+        if not item['creator_realname']:
+            creator_realname = 'None'
+        else:
+            creator_realname = item['creator_realname'][0]
         data={
             'project_id': item['id'],
             'state': item['state'],
@@ -164,9 +179,9 @@ class KickMongoPipeline:
 
             'creator_id': creator_id,
 
-            'creator_location' :item['creator_location'][0],
-            'creator_description' : item['creator_description'][0],
-            'creator_realname' : item['creator_realname'][0],
+            'creator_location' :creator_location,
+            'creator_description' : creator_description,
+            'creator_realname' : creator_realname,
             'creator_lastlogin' : last_login,
             'creator_facebook': creator_facebook,
             'creator_created_count' : creator_create,
@@ -335,8 +350,8 @@ class KickMongoPipeline:
                     # 'community_topcity_city': city,
                     'community_topcountry_country': country2,
                     'community_topcountry_backers': backers2,
-                    'newbacker': int(item['newbacker'][0]),
-                    'oldbacker': int(item['oldbacker'][0])
+                    'newbacker': int(space_number(item['newbacker'])[0]),
+                    'oldbacker': int(space_number(item['oldbacker'])[0])
 
                 }
 
