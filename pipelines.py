@@ -171,8 +171,8 @@ class KickMongoPipeline:
 
             'creator':item['creator'],
             'creator_url': 'https://www.kickstarter.com' + item['creator_url'],
-            'pledged': item['pledged'],
-            'goal': item['goal'],
+            'pledged': item['pledged'][0],
+            'goal': item['goal'][0],
             'backers_count': backers,
             'image_count': len(item['image']),
             'video_count': len(item['video']),

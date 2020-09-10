@@ -16,7 +16,7 @@ import pandas as pd
 # 1 6 7 16
 file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\art_link.csv'
 df = pd.read_csv(file)
-urls = list(df.loc[7000:10000,'link'])
+urls = list(df.loc[8269:12000,'link'])
 
 
 class KickSpider(scrapy.Spider):
@@ -204,10 +204,10 @@ class KickSpider(scrapy.Spider):
 
             item['pledged'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/h3/span/text())").extract()
             if not item['pledged']:
-                item['pledged'] = 'None'
+                item['pledged'] = ['None']
             item['goal'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/div/span/text()").extract()
             if not item['goal']:
-                item['goal'] = 'None'
+                item['goal'] = ['None']
             item['backers_count'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[2]/h3/text())").extract()
 
             item['creator_url'] = response.xpath(".//*[@id='content-wrap']/section/div[3]/div[2]/div/div[2]/div/div[2]/div[1]/div/div[2]/div[1]/a/@href").extract()[0]
