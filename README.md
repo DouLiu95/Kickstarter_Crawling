@@ -4,11 +4,17 @@ This is a crawl designed for kickstarter.
 # Prerequisites
 
 itemadapter==0.1.0
+
 Scrapy==2.3.0
+
 pymongo==3.11.0
+
 requests==2.24.0
+
 selenium==3.141.0
+
 pandas==1.1.0
+
 kick==1.1.0
 
 Python 3.8
