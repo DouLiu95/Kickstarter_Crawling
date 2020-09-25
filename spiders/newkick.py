@@ -1,4 +1,5 @@
 import scrapy
+import pymongo
 from scrapy import Selector
 from kick.items import DmozItem
 from kick.items import KickItem
@@ -6,21 +7,38 @@ from selenium import webdriver
 from  selenium.webdriver.chrome.options import Options    # 使用无头浏览器
 import json
 import re
-
+from kick.spiders.check import check_comments,check_updates,check_txt,get_link,miss_link
 chorme_options = Options()
 chorme_options.add_argument("--headless")
 chorme_options.add_argument("--disable-gpu")
 
 import pandas as pd
 
+myclient = pymongo.MongoClient('mongodb://localhost:27017/')
+# change db name here
+mydb = myclient["kick"]
+
+col_kick = mydb["kick"]
+col_budget = mydb["budget"]
+col_comments = mydb["comments"]
+col_community = mydb["community"]
+col_faq = mydb["faq"]
+col_pledge = mydb["pledge"]
+col_updates = mydb["updates"]
+
+path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
+df = pd.read_csv(path)
+df_art = pd.read_csv(r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\art_link.csv')
+link1,link2 =get_link(df,df_art)
+urls = miss_link(link1,link2)
 # 1 6 7 16
-file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\tech_link.csv'
-df = pd.read_csv(file)
-urls = list(df.loc[13846:15000,'link'])
-print(urls)
+# file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\tech_link.csv'
+# df = pd.read_csv(file)
+# urls = list(df.loc[13846:15000,'link'])
+# print(urls)
 
 class KickSpider(scrapy.Spider):
-    name = "kick"
+    name = "newkick"
     # start_urls = [
     #     "https://www.kickstarter.com/projects/papershredder/sugar-high-birthday-card?ref=discovery_category_ending_soon",
     #     "https://www.kickstarter.com/projects/artenvielfalt-ac/bluh-und-bienenwiese-in-der-aachener-region?ref=discovery_category_ending_soon",

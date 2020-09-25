@@ -26,7 +26,7 @@ ITEM_PIPELINES = {
 
 }
 MONGO_URI = 'mongodb://localhost:27017'
-MONGO_DB = "kick"
+MONGO_DB = "tech"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'kick (+http://www.yourdomain.com)'
 
