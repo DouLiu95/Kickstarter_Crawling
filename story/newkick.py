@@ -430,6 +430,10 @@ class KickSpider(scrapy.Spider):
                     tit = ['Canceled']
                     dat = ['Canceled']
                     nam = ['Canceled']
+                    reply_content = []
+                    reply_title = []
+                    reply_date = []
+                    reply_name = []
                 else:
                     con = sel.xpath("string(div/div[2]/div/p)").extract()
 

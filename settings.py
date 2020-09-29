@@ -20,13 +20,15 @@ DOWNLOADER_MIDDLEWARES = {
 }
 ITEM_PIPELINES = {
    # 'tutorial.pipelines.QQNewsPipeline': 300,
-   'kick.pipelines.KickMongoPipeline':400
+   # 'kick.pipelines.KickMongoPipeline':400
+    'kick.pipelines.KickStoryPipeline': 400
+
     # ,
     # 'kick.pipelines.KickFAQPipeline': 400
 
 }
 MONGO_URI = 'mongodb://localhost:27017'
-MONGO_DB = "tech"
+MONGO_DB = "kick"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'kick (+http://www.yourdomain.com)'
 

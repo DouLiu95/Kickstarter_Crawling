@@ -21,6 +21,7 @@ def marge(csv_list, SaveFile_Path):
         data1.to_csv(SaveFile_Path+ '\\'+ inputfile, mode='a', index=False)
         data2.to_csv(SaveFile_Path+ '\\'+ inputfile, mode='a', index=False)
         df = pd.read_csv(SaveFile_Path+ '\\'+ inputfile, header=None)
+        df = df.drop(df.columns[0],axis=1)
         datalist = df.drop_duplicates()
         datalist.to_csv(SaveFile_Path+ '\\'+ inputfile, index=False, header=False)
         print('完成去重')

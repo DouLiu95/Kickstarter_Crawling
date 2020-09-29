@@ -25,6 +25,10 @@ def get_link(df_own,df_all):
     link_all = [x for x in df_all['link']]
     return link_own,link_all
 
+def get_own_link(df_own):
+    link_own = [(y, x.replace(r'/creator_bio','')) for y,x in zip(df_own['project_id'],df_own['creator_url'])]
+    return link_own
+
 
 def delete_all(query):
     col_kick.delete_one(query)
@@ -60,10 +64,10 @@ def miss_link(record_own,record_all):
 def check_txt(id):
     # 没有问题变True, 有问题回复False
     if os.path.exists(r"C:\Users\LDLuc\PycharmProjects\kick"+'\\'+str(id)+".txt"):
-        with open(r"C:\Users\LDLuc\PycharmProjects\kick"+'\\'+str(id)+".txt", "r") as f:
+        with open(r"C:\Users\LDLuc\PycharmProjects\kick"+'\\'+str(id)+".txt", "r", encoding="utf8") as f:
             data = f.read()
             # 判断是否为空的文档
-            if len(data)<=4:
+            if len(data)<=10:
                 return False
             else:
                 return True
@@ -92,11 +96,22 @@ def check_comments(id):
             return True
     return False
 
+def miss_story(link):
+    link_missing = []
+    for i in link:
 
+        if check_txt(i[0]):
+            pass
+        else:
+            link_missing.append(str(i[1])+r"?ref=discovery_category_ending_soon")
+    print("There are {} stories missing".format(len(link_missing)))
+    return link_missing
 # check_comments(77950910)
 # path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
 # df = pd.read_csv(path)
 # df_art = pd.read_csv(r'art_link.csv')
-# link1,link2 =get_link(df,df_art)
+# link1 = get_own_link(df)
 # urls = miss_link(link1,link2)
 # print(urls,len(urls))
+# missing_story = miss_story(link1)
+# print(missing_story)

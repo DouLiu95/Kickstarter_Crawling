@@ -40,12 +40,12 @@ class SimpleProxyMiddleware(object):
 
                 # proxy = p[random.choice(range(len(p)))]
                 print('get proxy ...',proxy)
-                # ip = {"http": "http://" + proxy, "https": "https://" + proxy}
-
-                ip = {"http": "http://"+ proxy, "https": "https://" + proxy}
-                r = requests.get("https://www.kickstarter.com", proxies=ip, timeout=8)
-                if r.status_code == 200:
-                    return proxy
+                # # ip = {"http": "http://" + proxy, "https": "https://" + proxy}
+                #
+                # ip = {"http": "http://"+ proxy, "https": "https://" + proxy}
+                # r = requests.get("https://www.kickstarter.com", proxies=ip, timeout=8)
+                # if r.status_code == 200:
+                return proxy
         except:
             print('get proxy again ...')
             return self.get_random_proxy()
@@ -123,7 +123,7 @@ class KickSpiderMiddleware:
         prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         chrome_options.add_experimental_option("prefs", prefs)
 
-        if 'post' in request.url:
+        if r'\post' in request.url:
             self.driver = webdriver.Chrome(chrome_options=chrome_options,
                                            executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
             try:
@@ -145,7 +145,7 @@ class KickSpiderMiddleware:
 
             except:
                 print( "get updates data failed")
-        elif 'comments' in request.url:
+        elif r'\comments' in request.url:
             self.driver = webdriver.Chrome(chrome_options=chrome_options,
                                            executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
             try:
@@ -172,12 +172,26 @@ class KickSpiderMiddleware:
         else:
         # 指定谷歌浏览器路径
             self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
-            self.driver.get(request.url)
-            time.sleep(1)
-            html = self.driver.page_source
-            self.driver.quit()
-            return scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
-                                            request=request)
+            try:
+                self.driver.get(request.url)
+                self.driver.implicitly_wait(1)
+                time.sleep(1)
+                # story = r"string(.//div[@class='rte__content'])"
+                # print("the story is "+str(self.driver.find_element_by_xpath(story)))
+                # if len(self.driver.find_element_by_xpath(story)) >5:
+                html = self.driver.page_source
+                self.driver.quit()
+                # response =  scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
+                #                                 request=request)
+                # storys = response.xpath(story).extract()
+                # if len(storys) > 5:
+                return scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
+                                                request=request)
+
+
+            except:
+                print("get story data failed")
+
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
 

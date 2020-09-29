@@ -8,6 +8,97 @@
 from itemadapter import ItemAdapter
 import pymongo
 
+class KickStoryPipeline:
+    collection = 'kick'
+
+    def __init__(self, mongo_uri, mongo_db):
+            self.mongo_uri = mongo_uri
+            self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        '''
+            scrapy为我们访问settings提供了这样的一个方法，这里，
+            我们需要从settings.py文件中，取得数据库的URI和数据库名称
+        '''
+
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DB')
+        )
+    def open_spider(self, spider):
+        '''
+        爬虫一旦开启，就会实现这个方法，连接到数据库
+        '''
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+
+    def close_spider(self, spider):
+        '''
+        爬虫一旦关闭，就会实现这个方法，关闭数据库连接
+        '''
+        self.client.close()
+
+    def process_item(self, item, spider):
+        '''
+            每个实现保存的类里面必须都要有这个方法，且名字固定，用来具体实现怎么保存
+        '''
+
+        '''
+        保存story risk environmentalcommitments
+        '''
+        pattern_story = re.compile(r'(\n)+')
+        if len(item['story']) == 0:
+            item['story'] = "No description for story"
+        else:
+            new_story = re.sub(pattern_story,'\n',item['story'][0])
+            item['story'] = new_story
+
+        if len(item['risks']) == 0:
+            item['risks'] = "No description for risks"
+        else:
+            new_risk = re.sub(pattern_story, '\n', item['risks'][0])
+            item['risks'] = new_risk
+
+        if len(item['environmental_commitments']) == 0:
+            item['environmental_commitments'] = "No description for environmental_commitments"
+        else:
+            new_environmental_commitments = re.sub(pattern_story, '\n', item['environmental_commitments'][0])
+            item['environmental_commitments'] = new_environmental_commitments
+
+        self.txtname = r"C:\Users\LDLuc\PycharmProjects\kick"+"\\"+str(item['id'])+'.txt'
+        self.file = open(self.txtname, 'w', encoding = 'utf-8')
+        try:
+            self.file.write(item['story']+'\n')
+            self.file.write(item['risks']+'\n')
+            self.file.write(item['environmental_commitments']+'\n')
+
+        except:
+            pass
+        self.file.close()
+
+
+        if len(item['daystogo'])>=1:
+            return item
+
+        filter = {'project_id':  int(item['id'])}
+
+        table = self.db[self.collection]
+        # table.insert_one(data)
+
+        # Updating fan quantity form 10 to 25.
+
+
+        # Values to be updated.
+        newvalues = {"$set": {'image_count': len(item['image']),
+            'video_count': len(item['video']),}}
+
+        # Using update_one() method for single
+        # updation.
+        table.update_one(filter, newvalues)
+
+        return item
+
 class KickMongoPipeline:
     collection = 'kick'
     collection2 = 'faq'
