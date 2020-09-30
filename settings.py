@@ -15,9 +15,16 @@ NEWSPIDER_MODULE = 'kick.spiders'
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
 
 DOWNLOADER_MIDDLEWARES = {
+    # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
+    'kick.smartproxy_auth.ProxyMiddleware': 100,
     'kick.middlewares.KickSpiderMiddleware': 543,
-    'kick.middlewares.SimpleProxyMiddleware': 100,
+    # 'kick.middlewares.SimpleProxyMiddleware': 540,
+
 }
+SMARTPROXY_USER = 'ldlucien' ## Smartproxy Username (Sub-user)
+SMARTPROXY_PASSWORD = '12345678' ## Password for your user
+SMARTPROXY_ENDPOINT = 'gate.dc.smartproxy.com' ## Endpoint you'd like to use
+SMARTPROXY_PORT = '20000' ## Port of the endpoint you are using.
 ITEM_PIPELINES = {
    # 'tutorial.pipelines.QQNewsPipeline': 300,
    # 'kick.pipelines.KickMongoPipeline':400
@@ -37,7 +44,7 @@ ROBOTSTXT_OBEY = True
 # PROXY_URL = 'https://dps.kdlapi.com/api/getdps/?orderid=949911939411124&num=10&pt=1&format=json&sep=1'
 PROXY_URL = "https://proxy6.net/api/ad42a35cb3-e8fe6b14d1-6aca5e500f/getproxy"
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 6
 # import logging
 #
 # LOG_ENABLED=True

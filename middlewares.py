@@ -4,7 +4,7 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 from scrapy.http import HtmlResponse
 from scrapy import signals
-from selenium import webdriver
+from seleniumwire import webdriver
 from selenium.webdriver import FirefoxOptions
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
@@ -15,10 +15,13 @@ import requests
 import json
 import logging
 import random
+
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 # Scrapy 内置的 Downloader Middleware 为 Scrapy 供了基础的功能，
 # 定义一个类，其中（object）可以不写，效果一样
+
+
 class SimpleProxyMiddleware(object):
     def __init__(self, proxy_url):
         self.logger = logging.getLogger(__name__)
@@ -76,7 +79,19 @@ class KickSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
+    def __init__(self):
+        # chrome_options = webdriver.ChromeOptions()
+        # # 启用headless模式
+        # chrome_options.add_argument('--headless')
+        # # 关闭gpu
+        # chrome_options.add_argument('--disable-gpu')
+        # # 关闭图像显示
+        # chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+        # self.driver = webdriver.Chrome(chrome_options=chrome_options)
+        self.logger = logging.getLogger(__name__)
 
+    # def __del__(self):
+    #     self.driver.quit()
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
@@ -116,16 +131,29 @@ class KickSpiderMiddleware:
             yield r
 
     def process_request(self, request, spider):
+
         chrome_options = Options()
         chrome_options.add_argument('--headless')  # 使用无头谷歌浏览器模式
         chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument('--no-sandbox')
-        prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
-        chrome_options.add_experimental_option("prefs", prefs)
+        chrome_options.add_argument('--blink-settings=imagesEnabled=false')
 
+        # chrome_options.add_argument('--no-sandbox')
+        # prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
+        # chrome_options.add_experimental_option("prefs", prefs)
+        self.logger.debug('======' + 'use web driver ' + "======")
+        # chromium处理
+        # ...
+        options = {
+            'proxy': {
+                'http': 'http://ldlucien:12345678@gate.dc.smartproxy.com:20000',
+                'https': 'https://ldlucien:12345678@gate.dc.smartproxy.com:20000',
+                'no_proxy': 'localhost,127.0.0.1'  # excludes
+            }
+        }
         if r'\post' in request.url:
             self.driver = webdriver.Chrome(chrome_options=chrome_options,
                                            executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+
             try:
                 self.driver.get(request.url)
                 self.driver.implicitly_wait(1)
@@ -171,11 +199,15 @@ class KickSpiderMiddleware:
 
         else:
         # 指定谷歌浏览器路径
-            self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+            self.driver.get("http://httpbin.org/ip")
+            print(self.driver.page_source)
+            print(request.meta['proxy'])
+            print(request.headers['Proxy-Authorization'])
             try:
                 self.driver.get(request.url)
-                self.driver.implicitly_wait(1)
-                time.sleep(1)
+                self.driver.implicitly_wait(2)
+                time.sleep(2)
                 # story = r"string(.//div[@class='rte__content'])"
                 # print("the story is "+str(self.driver.find_element_by_xpath(story)))
                 # if len(self.driver.find_element_by_xpath(story)) >5:
