@@ -8,6 +8,104 @@
 from itemadapter import ItemAdapter
 import pymongo
 
+class KickUpdatesCommentsPipeline:
+    collection = 'updates'
+    collection2 = 'comments'
+
+    def __init__(self, mongo_uri, mongo_db):
+            self.mongo_uri = mongo_uri
+            self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        '''
+            scrapy为我们访问settings提供了这样的一个方法，这里，
+            我们需要从settings.py文件中，取得数据库的URI和数据库名称
+        '''
+
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DB')
+        )
+    def open_spider(self, spider):
+        '''
+        爬虫一旦开启，就会实现这个方法，连接到数据库
+        '''
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+
+    def close_spider(self, spider):
+        '''
+        爬虫一旦关闭，就会实现这个方法，关闭数据库连接
+        '''
+        self.client.close()
+
+    def process_item(self, item, spider):
+        '''
+            每个实现保存的类里面必须都要有这个方法，且名字固定，用来具体实现怎么保存
+        '''
+
+        '''
+        保存story risk environmentalcommitments
+        '''
+        if item['category'] == 0:
+            filter = {'project_id': int(item['id']),'updates_title': 'Error'}
+            table = self.db[self.collection]
+            table.remove(filter)
+            for i in range(int(space_number(item['updates_count'])[0])):
+                date = Date2(item['updates_date'][i][0])
+                data_updates = {
+                    'project_id': item['id'],
+                    'updates_count': int(space_number(item['updates_count'])[0]),
+                    'updates_title': item['updates_title'][i][0],
+                    'updates_creator': item['updates_creator'][i][0],
+                    'updates_date': date,
+
+                    'updates_content': item['updates_content'][i][0],
+                    'updates_heart': int(item['updates_heart'][i][0]),
+                    'updates_comments': int(item['updates_comments'][i][0])
+
+                }
+                # table = self.db[self.collection]
+                table.insert_one(data_updates)
+        elif item['category'] == 1:
+            if int(item['comments_count'][0]) != 0:
+                for i in range(len(item['comments_name'])):
+                    if len(item['recomments_name_list'][i]) != 0:
+                        for j in range(len(item['recomments_name_list'][i])):
+                            data_comments = {
+                                'project_id': item['id'],
+                                'comments_count': int(space_number(item['comments_count'])[0]),
+                                'comments_name': item['comments_name'][i][0],
+                                'comments_title': item['comments_title'][i][0],
+                                'comments_date': item['comments_date'][i][0],
+                                'comments_content': item['comments_content'][i][0],
+                                'reply_count': len(item['recomments_name_list'][i]),
+                                'reply_name': item['recomments_name_list'][i][j][0],
+                                'reply_title': item['recomments_title_list'][i][j][0],
+                                'reply_date': item['recomments_date_list'][i][j][0],
+                                'reply_content': item['recomments_content_list'][i][j][0],
+                            }
+                            table = self.db[self.collection2]
+                            table.insert_one(data_comments)
+                    else:
+                        data_comments = {
+                            'project_id': item['id'],
+                            'comments_count': int(space_number(item['comments_count'])[0]),
+                            'comments_name': item['comments_name'][i][0],
+                            'comments_title': item['comments_title'][i][0],
+                            'comments_date': item['comments_date'][i][0],
+                            'comments_content': item['comments_content'][i][0],
+                            'reply_count': 0,
+                            'reply_name': 'None',
+                            'reply_title': 'None',
+                            'reply_date': 'None',
+                            'reply_content': 'None',
+                        }
+                        table = self.db[self.collection2]
+                        table.insert_one(data_comments)
+        return item
+
 class KickStoryPipeline:
     collection = 'kick'
 

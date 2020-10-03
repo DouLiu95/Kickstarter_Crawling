@@ -29,6 +29,7 @@ ITEM_PIPELINES = {
    # 'tutorial.pipelines.QQNewsPipeline': 300,
    # 'kick.pipelines.KickMongoPipeline':400
     'kick.pipelines.KickStoryPipeline': 400
+   #  'kick.pipelines.KickUpdatesCommentsPipeline': 400
 
     # ,
     # 'kick.pipelines.KickFAQPipeline': 400

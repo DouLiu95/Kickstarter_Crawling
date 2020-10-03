@@ -30,6 +30,7 @@ def get_own_link(df_own):
     return link_own
 
 
+
 def delete_all(query):
     col_kick.delete_one(query)
     col_budget.delete_one(query)
@@ -79,22 +80,25 @@ def check_updates(id):
 
     myquery = {"project_id":id}
     mydoc = col_updates.find(myquery)
-    for x in mydoc:
-        if x['updates_title'] == 'Error':
-            print("error exist")
-            return False
-    return True
+    if col_comments.count_documents(myquery) == 0:
+        return False
+    else:
+        for x in mydoc:
+            if x['updates_title'] == 'Error':
+                #print("error exist")
+                return False
+
+        return True
 
 def check_comments(id):
     # 没有问题变True, 有问题回复False
 
     myquery = {"project_id":id}
-    mydoc = col_comments.find(myquery)
-    for x in mydoc:
-        if x['project_id'] == id:
-            print('exist')
-            return True
-    return False
+    count = col_comments.count_documents(myquery)
+    if count == 0:
+        return False
+    else:
+        return True
 
 def miss_story(link):
     link_missing = []
@@ -106,6 +110,38 @@ def miss_story(link):
             link_missing.append(str(i[1])+r"?ref=discovery_category_ending_soon")
     print("There are {} stories missing".format(len(link_missing)))
     return link_missing
+
+def miss_updates(df):
+    link_missing = []
+    df = df[['project_id','updates_count','comments_count','updates_url','comments_url']]
+
+    for index, row in df.iterrows():
+        print(index)
+        if row[1]==0 and row[2] ==0:
+            pass
+        elif row[1]!=0 and row[2] ==0:
+            if check_updates(row[0]):
+                pass
+            else:
+                link_missing.append((int(row[0]),(str(row[3]))))
+        elif row[1]==0 and row[2] !=0:
+            if check_comments(row[0]):
+                pass
+            else:
+                link_missing.append((int(row[0]),str(row[4])))
+        else:
+            a = check_updates(row[0])
+            b = check_comments(row[0])
+            if a and b:
+                pass
+            elif not a and b:
+                link_missing.append((int(row[0]),str(row[3])))
+            elif a and not b:
+                link_missing.append((int(row[0]),str(row[4])))
+            else:
+                link_missing.append((int(row[0]),str(row[3])))
+                link_missing.append((int(row[0]),str(row[4])))
+    return link_missing
 # check_comments(77950910)
 # path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
 # df = pd.read_csv(path)
@@ -115,3 +151,19 @@ def miss_story(link):
 # print(urls,len(urls))
 # missing_story = miss_story(link1)
 # print(missing_story)
+##----------------------------------------------------------------------
+## check the missing story
+# path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
+# df = pd.read_csv(path)
+# link1 = get_own_link(df)
+# # urls = miss_link(link1,link2)
+# # print(urls,len(urls))
+# urls = miss_story(link1)
+# print(len(urls))
+
+##----------------------------------------------------------------------
+## check missing updates and comments
+# path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
+# df = pd.read_csv(path)
+# link = miss_updates(df)
+# print(link)

@@ -100,4 +100,5 @@ class KickItem(scrapy.Item):
     budget_sub_category = scrapy.Field()
     budget_category_cost = scrapy.Field()
     budget_sub_category_cost = scrapy.Field()
+    category = scrapy.Field()
 

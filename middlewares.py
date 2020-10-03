@@ -150,8 +150,9 @@ class KickSpiderMiddleware:
                 'no_proxy': 'localhost,127.0.0.1'  # excludes
             }
         }
-        if r'\post' in request.url:
-            self.driver = webdriver.Chrome(chrome_options=chrome_options,
+        if r'/posts' in request.url:
+            print("processing post ======================================================")
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,
                                            executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
 
             try:
@@ -173,8 +174,10 @@ class KickSpiderMiddleware:
 
             except:
                 print( "get updates data failed")
-        elif r'\comments' in request.url:
-            self.driver = webdriver.Chrome(chrome_options=chrome_options,
+        elif r'/comments' in request.url:
+            print("processing comments ======================================================")
+
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,
                                            executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
             try:
                 self.driver.get(request.url)
@@ -199,11 +202,11 @@ class KickSpiderMiddleware:
 
         else:
         # 指定谷歌浏览器路径
+            print("processing normal ======================================================")
+            print(request.url)
             self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
-            self.driver.get("http://httpbin.org/ip")
             print(self.driver.page_source)
-            print(request.meta['proxy'])
-            print(request.headers['Proxy-Authorization'])
+
             try:
                 self.driver.get(request.url)
                 self.driver.implicitly_wait(2)
