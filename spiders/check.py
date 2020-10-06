@@ -79,10 +79,10 @@ def check_updates(id):
     # 没有问题变True, 有问题回复False
 
     myquery = {"project_id":id}
-    mydoc = col_updates.find(myquery)
-    if col_comments.count_documents(myquery) == 0:
+    if col_updates.count_documents(myquery) == 0:
         return False
     else:
+        mydoc = col_updates.find(myquery)
         for x in mydoc:
             if x['updates_title'] == 'Error':
                 #print("error exist")
@@ -153,13 +153,13 @@ def miss_updates(df):
 # print(missing_story)
 ##----------------------------------------------------------------------
 ## check the missing story
-# path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
-# df = pd.read_csv(path)
-# link1 = get_own_link(df)
-# # urls = miss_link(link1,link2)
-# # print(urls,len(urls))
-# urls = miss_story(link1)
-# print(len(urls))
+path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
+df = pd.read_csv(path)
+link1 = get_own_link(df)
+# urls = miss_link(link1,link2)
+# print(urls,len(urls))
+urls = miss_story(link1)
+print(len(urls))
 
 ##----------------------------------------------------------------------
 ## check missing updates and comments

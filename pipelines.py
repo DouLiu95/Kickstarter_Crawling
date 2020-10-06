@@ -52,7 +52,7 @@ class KickUpdatesCommentsPipeline:
             filter = {'project_id': int(item['id']),'updates_title': 'Error'}
             table = self.db[self.collection]
             table.remove(filter)
-            for i in range(int(space_number(item['updates_count'])[0])):
+            for i in range(len( item['updates_title'])):
                 date = Date2(item['updates_date'][i][0])
                 data_updates = {
                     'project_id': item['id'],

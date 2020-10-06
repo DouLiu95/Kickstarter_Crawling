@@ -86,6 +86,12 @@ class KickSpider(scrapy.Spider):
                 item['risks'] = response.xpath("string(.//div[@id='risks-and-challenges'])").extract()
                 item['environmental_commitments'] = response.xpath(
                     "string(.//div[@id='environmentalCommitments'])").extract()
+                if item['story'][0] == '':
+                    item['image'] = response.xpath(".//*[@class='mb3']/descendant::img/@src").extract()
+                    item['video'] = response.xpath(".//*[@class='mb3']/descendant::video/source/@src").extract()
+
+                    item['story'] = response.xpath("string(.//div[@class='rte__content js-full-description responsive-media'])").extract()
+                    item['risks'] = response.xpath("string(.//div[@id='mb3 mb10-sm mb3 js-risks'])").extract()
                 json_url = item['json_url']
                 yield scrapy.Request(json_url, callback=self.parse_json, meta={'item': item})
         else:
@@ -106,7 +112,13 @@ class KickSpider(scrapy.Spider):
             item['story'] = response.xpath("string(.//div[@class='rte__content'])").extract()
             item['risks'] = response.xpath("string(.//div[@id='risks-and-challenges'])").extract()
             item['environmental_commitments'] = response.xpath("string(.//div[@id='environmentalCommitments'])").extract()
+            if item['story'][0] == '':
+                item['image'] = response.xpath(".//*[@class='mb3']/descendant::img/@src").extract()
+                item['video'] = response.xpath(".//*[@class='mb3']/descendant::video/source/@src").extract()
 
+                item['story'] = response.xpath(
+                    "string(.//div[@class='rte__content js-full-description responsive-media'])").extract()
+                item['risks'] = response.xpath("string(.//div[@id='mb3 mb10-sm mb3 js-risks'])").extract()
             json_url = item['json_url']
             yield scrapy.Request(json_url, callback=self.parse_json, meta={'item': item})
             # yield item

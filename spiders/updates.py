@@ -140,6 +140,28 @@ class KickSpider(scrapy.Spider):
                     tit = ['Canceled']
                     dat = ['Canceled']
                     nam = ['Canceled']
+                    reply_content = []
+                    reply_title = []
+                    reply_date = []
+                    reply_name = []
+                    if len(sel.xpath("div[2]/ul/li/div").extract()) != 0:
+                        for reply in sel.xpath("div[2]/ul/li/div"):
+                            if reply.xpath("p/a/text()").extract() == ['Show the comment.']:
+                                reply_nam = ['Canceled']
+                                reply_tit = ['Canceled']
+                                reply_dat = ['Canceled']
+                                reply_con = ['Canceled']
+                            else:
+                                reply_nam = reply.xpath("div[1]/div/div/span[1]/text()").extract()
+                                reply_tit = reply.xpath("div[1]/div/div/span[2]/span/text()").extract()
+                                if reply_tit == []:
+                                    reply_tit = ['None']
+                                reply_dat = reply.xpath("div[1]/div/div/a/time/text()").extract()
+                                reply_con = reply.xpath("string(div[2]/div)").extract()
+                            reply_content.append(reply_con)
+                            reply_title.append(reply_tit)
+                            reply_date.append(reply_dat)
+                            reply_name.append(reply_nam)
                 else:
                     con = sel.xpath("string(div/div[2]/div/p)").extract()
 
@@ -168,7 +190,7 @@ class KickSpider(scrapy.Spider):
                                 if reply_tit == []:
                                     reply_tit = ['None']
                                 reply_dat = reply.xpath("div[1]/div/div/a/time/text()").extract()
-                                reply_con = reply.xpath("string(div[2]/div/p)").extract()
+                                reply_con = reply.xpath("string(div[2]/div)").extract()
                             reply_content.append(reply_con)
                             reply_title.append(reply_tit)
                             reply_date.append(reply_dat)

@@ -157,13 +157,15 @@ class KickSpiderMiddleware:
 
             try:
                 self.driver.get(request.url)
-                self.driver.implicitly_wait(1)
-                time.sleep(1)
+                self.driver.implicitly_wait(5)
+                # time.sleep(1)
                 button = ".//*[@id='project-post-interface']/div/div/div/div/div/button"
                 while True:
                     if len(self.driver.find_elements_by_xpath(button))> 0:
+                        self.driver.implicitly_wait(5)
+
                         self.driver.find_element_by_xpath(button).click()
-                        time.sleep(2)
+                        # time.sleep(1)
                     else:
                         print("No Button")
                         break
@@ -181,13 +183,14 @@ class KickSpiderMiddleware:
                                            executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
             try:
                 self.driver.get(request.url)
-                self.driver.implicitly_wait(1)
-                time.sleep(1)
+                self.driver.implicitly_wait(5)
+                # time.sleep(1)
                 button = ".//*[@id='react-project-comments']/div/button"
                 while True:
                     if len(self.driver.find_elements_by_xpath(button)) > 0:
+                        self.driver.implicitly_wait(5)
                         self.driver.find_element_by_xpath(button).click()
-                        time.sleep(2)
+                        # time.sleep(1)
                     else:
                         print("No Button")
                         break
@@ -209,8 +212,8 @@ class KickSpiderMiddleware:
 
             try:
                 self.driver.get(request.url)
-                self.driver.implicitly_wait(2)
-                time.sleep(2)
+                self.driver.implicitly_wait(5)
+                # time.sleep(2)
                 # story = r"string(.//div[@class='rte__content'])"
                 # print("the story is "+str(self.driver.find_element_by_xpath(story)))
                 # if len(self.driver.find_element_by_xpath(story)) >5:
