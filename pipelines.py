@@ -49,11 +49,14 @@ class KickUpdatesCommentsPipeline:
         保存story risk environmentalcommitments
         '''
         if item['category'] == 0:
-            filter = {'project_id': int(item['id']),'updates_title': 'Error'}
+            filter = {'project_id': item['id'],'updates_title': 'Error'}
+            print(filter)
             table = self.db[self.collection]
             table.remove(filter)
             for i in range(len( item['updates_title'])):
                 date = Date2(item['updates_date'][i][0])
+                if len(item['updates_content'][i]) == 0:
+                    item['updates_content'][i].append('No content')
                 data_updates = {
                     'project_id': item['id'],
                     'updates_count': int(space_number(item['updates_count'])[0]),

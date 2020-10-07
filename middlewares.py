@@ -145,27 +145,27 @@ class KickSpiderMiddleware:
         # ...
         options = {
             'proxy': {
-                'http': 'http://ldlucien:12345678@gate.dc.smartproxy.com:20000',
-                'https': 'https://ldlucien:12345678@gate.dc.smartproxy.com:20000',
+                'http': 'http://newproxy1:12345678@gate.dc.smartproxy.com:20000',
+                'https': 'https://newproxy1:12345678@gate.dc.smartproxy.com:20000',
                 'no_proxy': 'localhost,127.0.0.1'  # excludes
             }
         }
         if r'/posts' in request.url:
             print("processing post ======================================================")
             self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,
-                                           executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+                                           executable_path=r'C:\Users\LDLuc\PycharmProjects\kick\kick\chromedriver.exe')
 
             try:
                 self.driver.get(request.url)
-                self.driver.implicitly_wait(5)
-                # time.sleep(1)
+                # self.driver.implicitly_wait(5)
+                time.sleep(2)
                 button = ".//*[@id='project-post-interface']/div/div/div/div/div/button"
                 while True:
                     if len(self.driver.find_elements_by_xpath(button))> 0:
-                        self.driver.implicitly_wait(5)
+                        # self.driver.implicitly_wait(5)
 
                         self.driver.find_element_by_xpath(button).click()
-                        # time.sleep(1)
+                        time.sleep(2)
                     else:
                         print("No Button")
                         break
@@ -180,17 +180,18 @@ class KickSpiderMiddleware:
             print("processing comments ======================================================")
 
             self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,
-                                           executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+                                           executable_path=r'C:\Users\LDLuc\PycharmProjects\kick\kick\chromedriver.exe')
             try:
                 self.driver.get(request.url)
-                self.driver.implicitly_wait(5)
-                # time.sleep(1)
+                # self.driver.implicitly_wait(5)
+                time.sleep(2)
                 button = ".//*[@id='react-project-comments']/div/button"
                 while True:
                     if len(self.driver.find_elements_by_xpath(button)) > 0:
-                        self.driver.implicitly_wait(5)
+                        # self.driver.implicitly_wait(5)
                         self.driver.find_element_by_xpath(button).click()
-                        # time.sleep(1)
+                        print("=====================click the button===================")
+                        time.sleep(2)
                     else:
                         print("No Button")
                         break
@@ -207,13 +208,13 @@ class KickSpiderMiddleware:
         # 指定谷歌浏览器路径
             print("processing normal ======================================================")
             print(request.url)
-            self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,executable_path='C:\\Users\\LDLuc\\PycharmProjects\\tutorial-env\\Scripts\\chromedriver.exe')
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,seleniumwire_options=options,executable_path=r'C:\Users\LDLuc\PycharmProjects\kick\kick\chromedriver.exe')
             print(self.driver.page_source)
 
             try:
                 self.driver.get(request.url)
-                self.driver.implicitly_wait(5)
-                # time.sleep(2)
+                # self.driver.implicitly_wait(5)
+                time.sleep(2)
                 # story = r"string(.//div[@class='rte__content'])"
                 # print("the story is "+str(self.driver.find_element_by_xpath(story)))
                 # if len(self.driver.find_element_by_xpath(story)) >5:

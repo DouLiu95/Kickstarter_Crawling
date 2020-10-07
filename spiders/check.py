@@ -141,6 +141,68 @@ def miss_updates(df):
             else:
                 link_missing.append((int(row[0]),str(row[3])))
                 link_missing.append((int(row[0]),str(row[4])))
+    print(len(link_missing))
+    return link_missing
+def check_updates_csv(id, df):
+    if id not in df["project_id"].values:
+        # print(1)
+        return False
+    else:
+        row = df[df['project_id']==id]
+        # print(row)
+        if row.size ==1:
+            if row['updates_content']=='Error':
+                return False
+            else:
+                return True
+        else:
+
+            return True
+
+def check_comments_csv(id,df):
+    if id not in df.values:
+        return False
+    else:
+        return True
+def miss_updates_csv(df):
+    link_missing = []
+    df = df[['project_id','updates_count','comments_count','updates_url','comments_url']]
+    df_comments = pd.read_csv(r'C:\Users\LDLuc\Downloads\2020-09\kick_data\kick\comments.csv')
+    df_updates = pd.read_csv(r'C:\Users\LDLuc\Downloads\2020-09\kick_data\kick\updates.csv')
+
+    df_comments = df_comments['project_id']
+    df_updates = df_updates[['project_id','updates_title']]
+    # print(df_updates)
+    # print(check_updates_csv(527377731,df_updates))
+    # print(df_comments)
+    # print(check_comments_csv(1620551633356,df_comments))
+    for index, row in df.iterrows():
+        print(index)
+
+        if row[1]==0 and row[2] ==0:
+            pass
+        elif row[1]!=0 and row[2] ==0:
+            if check_updates_csv(row[0],df_updates):
+                pass
+            else:
+                link_missing.append((int(row[0]),(str(row[3]))))
+        elif row[1]==0 and row[2] !=0:
+            if check_comments_csv(row[0],df_comments):
+                pass
+            else:
+                link_missing.append((int(row[0]),str(row[4])))
+        else:
+            a = check_updates_csv(row[0],df_updates)
+            b = check_comments_csv(row[0],df_comments)
+            if a and b:
+                pass
+            elif not a and b:
+                link_missing.append((int(row[0]),str(row[3])))
+            elif a and not b:
+                link_missing.append((int(row[0]),str(row[4])))
+            else:
+                link_missing.append((int(row[0]),str(row[3])))
+                link_missing.append((int(row[0]),str(row[4])))
     return link_missing
 # check_comments(77950910)
 # path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
@@ -153,17 +215,18 @@ def miss_updates(df):
 # print(missing_story)
 ##----------------------------------------------------------------------
 ## check the missing story
-path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
-df = pd.read_csv(path)
-link1 = get_own_link(df)
-# urls = miss_link(link1,link2)
-# print(urls,len(urls))
-urls = miss_story(link1)
-print(len(urls))
+# path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
+# df = pd.read_csv(path)
+# link1 = get_own_link(df)
+# # urls = miss_link(link1,link2)
+# # print(urls,len(urls))
+# urls = miss_story(link1)
+# print(len(urls))
 
 ##----------------------------------------------------------------------
 ## check missing updates and comments
 # path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
 # df = pd.read_csv(path)
-# link = miss_updates(df)
-# print(link)
+# link = miss_updates_csv(df)
+# print(len(link))
+# print(check_updates(1632554331))

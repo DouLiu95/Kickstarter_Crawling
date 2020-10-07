@@ -6,7 +6,7 @@ from selenium import webdriver
 from  selenium.webdriver.chrome.options import Options    # 使用无头浏览器
 import json
 import re
-from kick.spiders.check import check_comments,check_updates,check_txt,get_link,miss_link,miss_story,get_own_link,miss_updates
+from kick.spiders.check import check_comments,check_updates,check_txt,get_link,miss_link,miss_story,get_own_link,miss_updates,miss_updates_csv
 
 
 
@@ -15,9 +15,9 @@ path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
 df = pd.read_csv(path)
 # urls = miss_link(link1,link2)
 # print(urls,len(urls))
-# urls = miss_updates(df)
-urls=[(1177221773,"https://www.kickstarter.com/projects/hypnonightmares/the-lucid-nightmare-project/posts"),
-      (1177221773,"https://www.kickstarter.com/projects/hypnonightmares/the-lucid-nightmare-project/comments")]
+urls = miss_updates_csv(df)
+# urls=[(1618577963,"https://www.kickstarter.com/projects/novelmenagerie/the-bookish-habits-enamel-pin-set-by-the-novel-menagerie/posts")]
+      # (1177221773,"https://www.kickstarter.com/projects/hypnonightmares/the-lucid-nightmare-project/comments")]
 # 1 6 7 16
 # file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\tech_link.csv'
 # df = pd.read_csv(file)
