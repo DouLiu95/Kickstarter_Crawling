@@ -74,7 +74,10 @@ class KickUpdatesCommentsPipeline:
         elif item['category'] == 1:
             if int(item['comments_count'][0]) != 0:
                 for i in range(len(item['comments_name'])):
-                    if len(item['recomments_name_list'][i]) != 0:
+                    if len(item['comments_date'][i]) == 0:
+                        pass
+
+                    elif len(item['recomments_name_list'][i]) != 0:
                         for j in range(len(item['recomments_name_list'][i])):
                             data_comments = {
                                 'project_id': item['id'],
