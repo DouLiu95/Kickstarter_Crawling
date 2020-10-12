@@ -251,7 +251,7 @@ def miss_budget(data_name):
     print(missing_link)
     print("====================    end  ============================")
     return missing_link
-miss_budget("kick")
+# miss_budget("kick")
 
 def find_error(data_name):
     myclient = pymongo.MongoClient('mongodb://localhost:27017/')
@@ -269,12 +269,14 @@ def find_error(data_name):
     myquery2 = {'image_count': {"$in": ['0','FALSE','False','false',0]},'video_count': {"$in": ['0','FALSE','False','false',0]}}
     condition = {"$or": [myquery,myquery2 ]}
     count = col_kick.count_documents(condition)
-    print("The number of missing budget is {}".format(count))
+    print("The number of missing image is {}".format(count))
     doc = col_kick.find(condition)
     for i in doc:
         missing_link.append((i['project_id'],i['faq_url'].replace(r'/faqs',r"?ref=discovery_category_ending_soon")))
-    print(missing_link)
-# find_error('kick')
+    print(len(list(set(missing_link))))
+    return list(set(missing_link))
+
+find_error('kick')
 
 
 # check_comments(77950910)

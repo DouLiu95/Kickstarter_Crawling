@@ -6,20 +6,20 @@ from selenium import webdriver
 from  selenium.webdriver.chrome.options import Options    # 使用无头浏览器
 import json
 import re
-from kick.spiders.check import check_comments,check_updates,check_txt,get_link,miss_link,miss_story,get_own_link,miss_updates,miss_updates_csv,miss_budget
+from kick.spiders.check import check_comments,check_updates,check_txt,get_link,miss_link,miss_story,get_own_link,miss_updates,miss_updates_csv,miss_budget,find_error
 
 
 
 import pandas as pd
 
-urls = miss_budget('kick')
+urls = find_error('kick')
 
 class KickSpider(scrapy.Spider):
     name = "error"
 
 
     def start_requests(self):
-        # urls = [('1389444817', 'https://www.kickstarter.com//projects/tapiocatea/hoenn-sweet-bird-enamel-pin-trio?ref=discovery_category_ending_soon')]
+        # urls = [ ('218135421', 'https://www.kickstarter.com//projects/annemarierogers/frog-wizard-pin?ref=discovery_category_ending_soon')]
         for url in urls:
             yield scrapy.Request(url=url[1], callback=self.parse,meta={'url':url})
 
