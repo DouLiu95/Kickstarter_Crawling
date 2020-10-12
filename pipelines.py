@@ -8,6 +8,109 @@
 from itemadapter import ItemAdapter
 import pymongo
 
+
+class KickBudgetPipeline:
+    collection = 'kick'
+    collection2 = 'budget'
+
+    def __init__(self, mongo_uri, mongo_db):
+            self.mongo_uri = mongo_uri
+            self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        '''
+            scrapy为我们访问settings提供了这样的一个方法，这里，
+            我们需要从settings.py文件中，取得数据库的URI和数据库名称
+        '''
+
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DB')
+        )
+    def open_spider(self, spider):
+        '''
+        爬虫一旦开启，就会实现这个方法，连接到数据库
+        '''
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+
+    def close_spider(self, spider):
+        '''
+        爬虫一旦关闭，就会实现这个方法，关闭数据库连接
+        '''
+        self.client.close()
+
+    def process_item(self, item, spider):
+        '''
+            每个实现保存的类里面必须都要有这个方法，且名字固定，用来具体实现怎么保存
+        '''
+
+        '''
+        保存story risk environmentalcommitments
+        '''
+        filter_kick = {'project_id':item['id']}
+
+        table = self.db[self.collection]
+        # table.insert_one(data)
+
+        # Updating fan quantity form 10 to 25.
+
+        # Values to be updated.
+        newvalues = {"$set": {'image_count': len(item['image']),
+                              'video_count': len(item['video']),
+                              'pledged':item['pledged'][0],
+                              'goal':item['goal'][0],
+                              'backers_count':item['backers_count'][0]}}
+
+        # Using update_one() method for single
+        # updation.
+        table.update_many(filter_kick, newvalues)
+
+        if len(item['budget_category']) >=1:
+            cost  = 0
+            for i in range(len(item['budget_category_cost'])):
+                cost += int(space_number(item['budget_category_cost'][i])[0])
+
+
+            for i in range(len(item['budget_category'])):
+                category = item['budget_category'][i][0]
+                category_cost = item['budget_category_cost'][i][0]
+                category_count = len(item['budget_category'])
+                if item['budget_sub_category'][i]==[]:
+                    data_budget = {
+                        'project_id': item['id'],
+                        'total_budget': cost,
+                        'category': category,
+                        'category_cost': category_cost,
+                        'category_count': category_count,
+                        'sub_category': 'Empty',
+                        'sub_category_cost': 'Empty',
+                        'sub_category_count': 'Empty'
+
+                    }
+                    table = self.db[self.collection2]
+                    table.insert_one(data_budget)
+                else:
+                    for j in range(len(item['budget_sub_category'][i])):
+                        sub_category = item['budget_sub_category'][i][j]
+                        sub_category_cost = item['budget_sub_category_cost'][i][j]
+                        sub_category_count = len(item['budget_sub_category'][i])
+                        data_budget = {
+                            'project_id': item['id'],
+                            'total_budget':cost,
+                            'category' : category,
+                            'category_cost': category_cost,
+                            'category_count':category_count,
+                            'sub_category': sub_category,
+                            'sub_category_cost':sub_category_cost,
+                            'sub_category_count':sub_category_count
+
+                        }
+                        table = self.db[self.collection2]
+                        table.insert_one(data_budget)
+        return item
+
 class KickUpdatesCommentsPipeline:
     collection = 'updates'
     collection2 = 'comments'
@@ -72,7 +175,7 @@ class KickUpdatesCommentsPipeline:
                 # table = self.db[self.collection]
                 table.insert_one(data_updates)
         elif item['category'] == 1:
-            if int(item['comments_count'][0]) != 0:
+            if True:
                 for i in range(len(item['comments_name'])):
                     if len(item['comments_date'][i]) == 0:
                         pass

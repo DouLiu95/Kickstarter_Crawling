@@ -16,6 +16,7 @@ df = pd.read_csv(path)
 # urls = miss_link(link1,link2)
 # print(urls,len(urls))
 urls = miss_updates_csv(df)
+print(len(urls))
 # urls=[(1618577963,"https://www.kickstarter.com/projects/novelmenagerie/the-bookish-habits-enamel-pin-set-by-the-novel-menagerie/posts")]
       # (1177221773,"https://www.kickstarter.com/projects/hypnonightmares/the-lucid-nightmare-project/comments")]
 # 1 6 7 16

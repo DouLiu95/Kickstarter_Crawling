@@ -93,7 +93,9 @@ class KickSpider(scrapy.Spider):
                     response.xpath(
                         ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/span/span[2]/span/text()").extract()
                 if not item['goal']:
-                    item['goal'] = 'None'
+                    item['goal'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/span/span[2]/button/span/span/text()")
+                    if not item['goal']:
+                        item['goal'] = 'None'
                 item['backers_count'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[2]/div/span/text()").extract()
 
                 item['creator_url'] = item['link'] + '/creator_bio'

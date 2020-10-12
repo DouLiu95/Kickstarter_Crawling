@@ -159,6 +159,21 @@ def check_updates_csv(id, df):
 
             return True
 
+import re
+def space_number(list):
+    if len(list)>=1 :
+        new_list = []
+        for element in list:
+            if element == '\n':
+                pass
+            else:
+                a = re.sub(r'\s+','', element)
+                new_element = re.sub("[^0-9]", "",a)
+                new_list.append(new_element)
+        ls = [x for x in new_list if x != '']
+        return ls
+    else:
+        return [int(0)]
 def check_comments_csv(id,df):
     if id not in df.values:
         return False
@@ -178,32 +193,90 @@ def miss_updates_csv(df):
     # print(check_comments_csv(1620551633356,df_comments))
     for index, row in df.iterrows():
         print(index)
+        if row[2]>1000 or row[1]>1000:
 
-        if row[1]==0 and row[2] ==0:
-            pass
-        elif row[1]!=0 and row[2] ==0:
-            if check_updates_csv(row[0],df_updates):
+            # print(row[1],row[2])
+            if row[1]==0 and row[2] ==0:
                 pass
+            elif row[1]!=0 and row[2] ==0:
+                if check_updates_csv(row[0],df_updates):
+                    pass
+                else:
+                    link_missing.append((int(row[0]),(str(row[3]))))
+            elif row[1]==0 and row[2] !=0:
+                if check_comments_csv(row[0],df_comments):
+                    pass
+                else:
+                    link_missing.append((int(row[0]),str(row[4])))
             else:
-                link_missing.append((int(row[0]),(str(row[3]))))
-        elif row[1]==0 and row[2] !=0:
-            if check_comments_csv(row[0],df_comments):
-                pass
-            else:
-                link_missing.append((int(row[0]),str(row[4])))
+                a = check_updates_csv(row[0],df_updates)
+                b = check_comments_csv(row[0],df_comments)
+                if a and b:
+                    pass
+                elif not a and b:
+                    link_missing.append((int(row[0]),str(row[3])))
+                elif a and not b:
+                    link_missing.append((int(row[0]),str(row[4])))
+                else:
+                    link_missing.append((int(row[0]),str(row[3])))
+                    link_missing.append((int(row[0]),str(row[4])))
         else:
-            a = check_updates_csv(row[0],df_updates)
-            b = check_comments_csv(row[0],df_comments)
-            if a and b:
-                pass
-            elif not a and b:
-                link_missing.append((int(row[0]),str(row[3])))
-            elif a and not b:
-                link_missing.append((int(row[0]),str(row[4])))
-            else:
-                link_missing.append((int(row[0]),str(row[3])))
-                link_missing.append((int(row[0]),str(row[4])))
+            pass
     return link_missing
+
+def miss_budget(data_name):
+    myclient = pymongo.MongoClient('mongodb://localhost:27017/')
+    # change db name here
+    mydb = myclient[data_name]
+    missing_link = []
+    col_kick = mydb["kick"]
+    col_budget = mydb["budget"]
+    col_comments = mydb["comments"]
+    col_community = mydb["community"]
+    col_faq = mydb["faq"]
+    col_pledge = mydb["pledge"]
+    col_updates = mydb["updates"]
+
+    myquery = {"goal": {"$in": ['None','N']}}
+    count = col_kick.count_documents(myquery)
+    print("The number of missing budget is {}".format(count))
+    mydoc = col_kick.find(myquery)
+    for i in mydoc:
+        print(i['project_id'])
+        search = {'project_id':i['project_id']}
+        if col_budget.count_documents(search) ==0:
+            print('yes')
+            missing_link.append((i["project_id"],i['faq_url'].replace(r'/faqs',r"?ref=discovery_category_ending_soon")))
+    print("====================the missing link=====================")
+    print(missing_link)
+    print("====================    end  ============================")
+    return missing_link
+miss_budget("kick")
+
+def find_error(data_name):
+    myclient = pymongo.MongoClient('mongodb://localhost:27017/')
+    # change db name here
+    mydb = myclient[data_name]
+    missing_link = []
+    col_kick = mydb["kick"]
+    col_budget = mydb["budget"]
+    col_comments = mydb["comments"]
+    col_community = mydb["community"]
+    col_faq = mydb["faq"]
+    col_pledge = mydb["pledge"]
+    col_updates = mydb["updates"]
+    myquery = {"pledged":  {"$in": ['None','N']}}
+    myquery2 = {'image_count': {"$in": ['0','FALSE','False','false',0]},'video_count': {"$in": ['0','FALSE','False','false',0]}}
+    condition = {"$or": [myquery,myquery2 ]}
+    count = col_kick.count_documents(condition)
+    print("The number of missing budget is {}".format(count))
+    doc = col_kick.find(condition)
+    for i in doc:
+        missing_link.append((i['project_id'],i['faq_url'].replace(r'/faqs',r"?ref=discovery_category_ending_soon")))
+    print(missing_link)
+# find_error('kick')
+
+
 # check_comments(77950910)
 # path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
 # df = pd.read_csv(path)
