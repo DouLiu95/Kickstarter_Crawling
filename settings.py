@@ -16,7 +16,7 @@ USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36
 
 DOWNLOADER_MIDDLEWARES = {
     # 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 110,
-    'kick.smartproxy_auth.ProxyMiddleware': 100,
+    # 'kick.smartproxy_auth.ProxyMiddleware': 100,
     'kick.middlewares.KickSpiderMiddleware': 543,
     # 'kick.middlewares.SimpleProxyMiddleware': 540,
 
@@ -27,17 +27,17 @@ SMARTPROXY_ENDPOINT = 'gate.dc.smartproxy.com' ## Endpoint you'd like to use
 SMARTPROXY_PORT = '20000' ## Port of the endpoint you are using.
 ITEM_PIPELINES = {
    # 'tutorial.pipelines.QQNewsPipeline': 300,
-   # 'kick.pipelines.KickMongoPipeline':400
+   'kick.pipelines.KickMongoPipeline':400
    #  'kick.pipelines.KickStoryPipeline': 400
    #  'kick.pipelines.KickUpdatesCommentsPipeline': 400
-    'kick.pipelines.KickBudgetPipeline': 400
+   #  'kick.pipelines.KickBudgetPipeline': 400
 
     # ,
     # 'kick.pipelines.KickFAQPipeline': 400
 
 }
 MONGO_URI = 'mongodb://localhost:27017'
-MONGO_DB = "kick"
+MONGO_DB = "test"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'kick (+http://www.yourdomain.com)'
 

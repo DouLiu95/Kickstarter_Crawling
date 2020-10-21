@@ -164,7 +164,7 @@ class KickSpider(scrapy.Spider):
                             reply_date.append(reply_dat)
                             reply_name.append(reply_nam)
                 else:
-                    con = sel.xpath("string(div/div[2]/div/p)").extract()
+                    con = sel.xpath("string(div/div[2]/div)").extract()
 
                     tit = sel.xpath("div/div[1]/div/div/span[2]/span/text()").extract()
                     if tit == []:

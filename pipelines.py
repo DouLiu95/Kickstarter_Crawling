@@ -66,7 +66,14 @@ class KickBudgetPipeline:
         # Using update_one() method for single
         # updation.
         table.update_many(filter_kick, newvalues)
+        self.txtname = r"C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\fixerror.txt"
+        self.file = open(self.txtname, 'w', encoding='utf-8')
+        try:
+            self.file.write(item['link'] + '\n')
 
+        except:
+            pass
+        self.file.close()
         if len(item['budget_category']) >=1:
             cost  = 0
             for i in range(len(item['budget_category_cost'])):
@@ -370,7 +377,8 @@ class KickMongoPipeline:
             new_environmental_commitments = re.sub(pattern_story, '\n', item['environmental_commitments'][0])
             item['environmental_commitments'] = new_environmental_commitments
 
-        self.txtname = str(item['id'])+'.txt'
+
+        self.txtname =  r"C:\Users\LDLuc\PycharmProjects\kick\kick\story\{}.txt".format(str(item['id']) )
         self.file = open(self.txtname, 'w', encoding = 'utf-8')
         try:
             self.file.write(item['story']+'\n')
@@ -463,6 +471,7 @@ class KickMongoPipeline:
             'project_name':item['project_name'],
             'project_description':item['project_description'],
             'project_location':item['project_location'],
+            'category':item['category'],
             'subcategory':item['subcategory'],
             'start_date': start_date,
             'end_date': end_date,
@@ -533,9 +542,12 @@ class KickMongoPipeline:
         #         else:
         #             pass
 
+
         if item['updates_count'][0] !=  '0' and len(item['updates_content'])!=0:
             for i in range(len(item['updates_title'])):
                 date = Date2(item['updates_date'][i][0])
+                if len(item['updates_content'][i]) == 0:
+                    item['updates_content'][i].append('No content')
                 data_updates = {
                     'project_id': item['id'],
                     'updates_count': int(space_number(item['updates_count'])[0]),

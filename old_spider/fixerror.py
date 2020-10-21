@@ -12,14 +12,14 @@ from kick.spiders.check import check_comments,check_updates,check_txt,get_link,m
 
 import pandas as pd
 
-urls = find_error('kick')
+# urls = find_error('kick')
 
 class KickSpider(scrapy.Spider):
     name = "error"
 
 
     def start_requests(self):
-        # urls = [ ('218135421', 'https://www.kickstarter.com//projects/annemarierogers/frog-wizard-pin?ref=discovery_category_ending_soon')]
+        urls = [ ('1903666410', 'https://www.kickstarter.com//projects/norenrealm/moth-moon-and-stag?ref=discovery_category_ending_soon')]
         for url in urls:
             yield scrapy.Request(url=url[1], callback=self.parse,meta={'url':url})
 
@@ -28,6 +28,7 @@ class KickSpider(scrapy.Spider):
         id = response.meta['url']
         item = KickItem()
         item['id'] = id[0]
+        item['link'] = id[1]
         item['project_status'] = response.xpath(
             ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[3]/div[1]/text()").extract()
         pattern = re.compile(r'\?ref\=.*')

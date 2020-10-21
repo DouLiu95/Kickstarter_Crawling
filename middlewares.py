@@ -15,65 +15,66 @@ import requests
 import json
 import logging
 import random
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 # Scrapy 内置的 Downloader Middleware 为 Scrapy 供了基础的功能，
 # 定义一个类，其中（object）可以不写，效果一样
 
-
-class SimpleProxyMiddleware(object):
-    def __init__(self, proxy_url):
-        self.logger = logging.getLogger(__name__)
-        self.proxy_url = proxy_url
-
-    def get_random_proxy(self):
-        try:
-            response = requests.get(self.proxy_url)
-            if response.status_code == 200:
-                li =[]
-                # p = json.loads(response.text).get('data').get('proxy_list')
-                p = json.loads(response.text).get('list')
-                for key in json.loads(json.dumps(p)):
-                    li.append(key)
-                i = random.choice(li)
-                # p = p.get('data').get('proxy_list')
-                # i = random.choice(range(len(p)))
-                proxy = '{}:{}@{}:{}'.format(p[i].get('user'),p[i].get('pass'),p[i].get('ip'), p[i].get('port'))
-
-                # proxy = p[random.choice(range(len(p)))]
-                print('get proxy ...',proxy)
-                # # ip = {"http": "http://" + proxy, "https": "https://" + proxy}
-                #
-                # ip = {"http": "http://"+ proxy, "https": "https://" + proxy}
-                # r = requests.get("https://www.kickstarter.com", proxies=ip, timeout=8)
-                # if r.status_code == 200:
-                return proxy
-        except:
-            print('get proxy again ...')
-            return self.get_random_proxy()
-
-    def process_request(self, request, spider):
-        if 'ref=' in request.url or 'comments' in request.url or 'post' in request.url:
-            proxy = self.get_random_proxy()
-            if proxy:
-                self.logger.debug('======' + '使用代理 ' + str(proxy) + "======")
-                request.meta['proxy'] = 'https://{proxy}'.format(proxy=proxy)
-
-    def process_response(self, request, response, spider):
-        if response.status != 200:
-            print("again response ip:")
-            request.meta['proxy'] = 'https://{proxy}'.format(proxy=self.get_random_proxy())
-            return request
-        return response
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        settings = crawler.settings
-        return cls(
-            proxy_url=settings.get('PROXY_URL')
-        )
-
+#
+# class SimpleProxyMiddleware(object):
+#     def __init__(self, proxy_url):
+#         self.logger = logging.getLogger(__name__)
+#         self.proxy_url = proxy_url
+#
+#     def get_random_proxy(self):
+#         try:
+#             response = requests.get(self.proxy_url)
+#             if response.status_code == 200:
+#                 li =[]
+#                 # p = json.loads(response.text).get('data').get('proxy_list')
+#                 p = json.loads(response.text).get('list')
+#                 for key in json.loads(json.dumps(p)):
+#                     li.append(key)
+#                 i = random.choice(li)
+#                 # p = p.get('data').get('proxy_list')
+#                 # i = random.choice(range(len(p)))
+#                 proxy = '{}:{}@{}:{}'.format(p[i].get('user'),p[i].get('pass'),p[i].get('ip'), p[i].get('port'))
+#
+#                 # proxy = p[random.choice(range(len(p)))]
+#                 print('get proxy ...',proxy)
+#                 # # ip = {"http": "http://" + proxy, "https": "https://" + proxy}
+#                 #
+#                 # ip = {"http": "http://"+ proxy, "https": "https://" + proxy}
+#                 # r = requests.get("https://www.kickstarter.com", proxies=ip, timeout=8)
+#                 # if r.status_code == 200:
+#                 return proxy
+#         except:
+#             print('get proxy again ...')
+#             return self.get_random_proxy()
+#
+#     def process_request(self, request, spider):
+#         if 'ref=' in request.url or 'comments' in request.url or 'post' in request.url:
+#             proxy = self.get_random_proxy()
+#             if proxy:
+#                 self.logger.debug('======' + '使用代理 ' + str(proxy) + "======")
+#                 request.meta['proxy'] = 'https://{proxy}'.format(proxy=proxy)
+#
+#     def process_response(self, request, response, spider):
+#         if response.status != 200:
+#             print("again response ip:")
+#             request.meta['proxy'] = 'https://{proxy}'.format(proxy=self.get_random_proxy())
+#             return request
+#         return response
+#
+#     @classmethod
+#     def from_crawler(cls, crawler):
+#         settings = crawler.settings
+#         return cls(
+#             proxy_url=settings.get('PROXY_URL')
+#         )
+#
 
 class KickSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
@@ -136,7 +137,9 @@ class KickSpiderMiddleware:
         chrome_options.add_argument('--headless')  # 使用无头谷歌浏览器模式
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--blink-settings=imagesEnabled=false')
-
+        # desired_capabilities = DesiredCapabilities.CHROME  # 修改页面加载策略 # none表示将br.get方法改为非阻塞模式，在页面加载过程中也可以给br发送指令，如获取url，pagesource等资源。
+        # desired_capabilities["pageLoadStrategy"] = "none"
+        # driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=chrome_driver_path, desired_capabilities=desired_capabilities)
         # chrome_options.add_argument('--no-sandbox')
         # prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
         # chrome_options.add_experimental_option("prefs", prefs)
@@ -145,8 +148,8 @@ class KickSpiderMiddleware:
         # ...
         options = {
             'proxy': {
-                'http': 'http://newproxy1:12345678@gate.dc.smartproxy.com:20000',
-                'https': 'https://newproxy1:12345678@gate.dc.smartproxy.com:20000',
+                'http': 'http://ldlucien:12345678@gate.dc.smartproxy.com:20000',
+                'https': 'https://ldlucien:12345678@gate.dc.smartproxy.com:20000',
                 'no_proxy': 'localhost,127.0.0.1'  # excludes
             }
         }
@@ -204,7 +207,7 @@ class KickSpiderMiddleware:
                 print("get updates data failed")
 
 
-        else:
+        elif r'/stats.json?v=1' in request.url or r'?ref=discovery_category_ending_soon' in request.url:
         # 指定谷歌浏览器路径
             print("processing normal ======================================================")
             print(request.url)
@@ -214,7 +217,7 @@ class KickSpiderMiddleware:
             try:
                 self.driver.get(request.url)
                 # self.driver.implicitly_wait(5)
-                time.sleep(2)
+                time.sleep(1)
                 # story = r"string(.//div[@class='rte__content'])"
                 # print("the story is "+str(self.driver.find_element_by_xpath(story)))
                 # if len(self.driver.find_element_by_xpath(story)) >5:
@@ -229,7 +232,31 @@ class KickSpiderMiddleware:
 
 
             except:
-                print("get story data failed")
+                print("get normal data failed")
+        else:
+            print("processing other ======================================================")
+            print(request.url)
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,
+                                           executable_path=r'C:\Users\LDLuc\PycharmProjects\kick\kick\chromedriver.exe')
+            print(self.driver.page_source)
+
+            try:
+                self.driver.get(request.url)
+                # self.driver.implicitly_wait(5)
+                time.sleep(1)
+                # story = r"string(.//div[@class='rte__content'])"
+                # print("the story is "+str(self.driver.find_element_by_xpath(story)))
+                # if len(self.driver.find_element_by_xpath(story)) >5:
+                html = self.driver.page_source
+                self.driver.quit()
+                # response =  scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
+                #                                 request=request)
+                # storys = response.xpath(story).extract()
+                # if len(storys) > 5:
+                return scrapy.http.HtmlResponse(url=request.url, body=html.encode('utf-8'), encoding='utf-8',
+                                                request=request)
+            except:
+                print("get other data failed")
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)

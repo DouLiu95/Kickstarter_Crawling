@@ -150,8 +150,9 @@ def check_updates_csv(id, df):
     else:
         row = df[df['project_id']==id]
         # print(row)
-        if row.size ==1:
-            if row['updates_content']=='Error':
+        if row.size ==2:
+            # print(row)
+            if 'Error' in row['updates_title'].values:
                 return False
             else:
                 return True
@@ -193,7 +194,7 @@ def miss_updates_csv(df):
     # print(check_comments_csv(1620551633356,df_comments))
     for index, row in df.iterrows():
         print(index)
-        if row[2]>1000 or row[1]>1000:
+        if True:
 
             # print(row[1],row[2])
             if row[1]==0 and row[2] ==0:
@@ -202,26 +203,27 @@ def miss_updates_csv(df):
                 if check_updates_csv(row[0],df_updates):
                     pass
                 else:
-                    link_missing.append((int(row[0]),(str(row[3]))))
+                    link_missing.append((row[0],(str(row[3]))))
             elif row[1]==0 and row[2] !=0:
                 if check_comments_csv(row[0],df_comments):
                     pass
                 else:
-                    link_missing.append((int(row[0]),str(row[4])))
+                    link_missing.append((row[0],str(row[4])))
             else:
                 a = check_updates_csv(row[0],df_updates)
                 b = check_comments_csv(row[0],df_comments)
                 if a and b:
                     pass
                 elif not a and b:
-                    link_missing.append((int(row[0]),str(row[3])))
+                    link_missing.append((row[0],str(row[3])))
                 elif a and not b:
-                    link_missing.append((int(row[0]),str(row[4])))
+                    link_missing.append((row[0],str(row[4])))
                 else:
-                    link_missing.append((int(row[0]),str(row[3])))
-                    link_missing.append((int(row[0]),str(row[4])))
+                    link_missing.append((row[0],str(row[3])))
+                    link_missing.append((row[0],str(row[4])))
         else:
             pass
+    link_missing = list(set(link_missing))
     return link_missing
 
 def miss_budget(data_name):
@@ -267,7 +269,7 @@ def find_error(data_name):
     col_updates = mydb["updates"]
     myquery = {"pledged":  {"$in": ['None','N']}}
     myquery2 = {'image_count': {"$in": ['0','FALSE','False','false',0]},'video_count': {"$in": ['0','FALSE','False','false',0]}}
-    condition = {"$or": [myquery,myquery2 ]}
+    condition = {"$or": [myquery2 ]}
     count = col_kick.count_documents(condition)
     print("The number of missing image is {}".format(count))
     doc = col_kick.find(condition)
@@ -276,7 +278,8 @@ def find_error(data_name):
     print(len(list(set(missing_link))))
     return list(set(missing_link))
 
-find_error('kick')
+link = find_error('kick')
+# print(link)
 
 
 # check_comments(77950910)
@@ -303,5 +306,6 @@ find_error('kick')
 # path = r"C:/Users/LDLuc/Downloads/2020-09/kick_data/kick/merged/kick.csv"
 # df = pd.read_csv(path)
 # link = miss_updates_csv(df)
+# print(link)
 # print(len(link))
 # print(check_updates(1632554331))

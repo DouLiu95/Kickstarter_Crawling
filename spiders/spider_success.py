@@ -14,10 +14,10 @@ chorme_options.add_argument("--disable-gpu")
 import pandas as pd
 
 # 1 6 7 16
-file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\tech_link.csv'
+file = r'C:\Users\LDLuc\PycharmProjects\kick\kick\spiders\crafts.csv'
 df = pd.read_csv(file)
-urls = list(df.loc[13846:15000,'link'])
-print(urls)
+urls = list(df['link'])
+# print(urls)
 
 class KickSpider(scrapy.Spider):
     name = "kick"
@@ -29,25 +29,9 @@ class KickSpider(scrapy.Spider):
     # ]
 
     def start_requests(self):
-        urls = [
-        #     # "https://www.kickstarter.com/projects/papershredder/sugar-high-birthday-card?ref=discovery_category_ending_soon",
-        # # "https://www.kickstarter.com/projects/artenvielfalt-ac/bluh-und-bienenwiese-in-der-aachener-region?ref=discovery_category_ending_soon",
-        # # "https://www.kickstarter.com/projects/sparrgames/keep-an-eye-out-make-100?ref=discovery_category_ending_soon",
-        # # "https://www.kickstarter.com/projects/1286014/love-yourself-photography-book?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/unbornartstudios/rave-pin-series-1?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/saphirrannart/monsters-of-fantasy?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/trupotreats/vegan-crunch-bars?ref=recommendation-no-result-discoverpage-4",
-        # #     "https://www.kickstarter.com/projects/ksscomics/tales-from-neroesville-issues-1-2-and-3?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/valimor/makaidos-swiss-automatic-movt-watches-and-patented?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/pigeonoverlord/pigeon-overlord-geeky-unisex-shirts?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/256270160/warrior-cats-enamel-pins?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/1110317881/pms-bites-take-the-bite-out-of-pms?ref=discovery_category_ending_soon",
-        # #     "https://www.kickstarter.com/projects/50545525/union-webseries?ref=discovery_category_ending_soon",
-        #     "https://www.kickstarter.com/projects/cloudy-comics/cloudy-comics-merchandise?ref=discovery_category_ending_soon",
-        #     "https://www.kickstarter.com/projects/541894646/adventure-time-cmon-grab-your-friends-posters?ref=discovery_tag",
-            "https://www.kickstarter.com/projects/1286014/love-yourself-photography-book"
-        ]
+        # urls = [
+        # "https://www.kickstarter.com/projects/papershredder/sugar-high-birthday-card?ref=discovery_category_ending_soon"
+        # ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
             # def __init__(self):
@@ -56,6 +40,7 @@ class KickSpider(scrapy.Spider):
     def parse(self, response):
 
         item = KickItem()
+        item['category'] = 'test'
         item['project_status'] = response.xpath(
             ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[3]/div[1]/text()").extract()
         pattern = re.compile(r'\?ref\=.*')
@@ -86,17 +71,22 @@ class KickSpider(scrapy.Spider):
                 if not item['end_date']:
                     item['end_date'] = 'None'
 
-                item['pledged'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/div[2]/span[1]/span/text()").extract()
+                item['pledged'] = response.xpath(
+                    ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/div[2]/span[1]/span/text()").extract()
                 if not item['pledged']:
-                    item['pledged'] = 'None'
+                    item['pledged'] = ['None']
                 item['goal'] = \
                     response.xpath(
                         ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/span/span[2]/span/text()").extract()
                 if not item['goal']:
-                    item['goal'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/span/span[2]/button/span/span/text()")
+                    item['goal'] = response.xpath(
+                        ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[1]/span/span[2]/button/span/span/text()").extract()
                     if not item['goal']:
-                        item['goal'] = 'None'
-                item['backers_count'] = response.xpath(".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[2]/div/span/text()").extract()
+                        item['goal'] = ['None']
+                item['backers_count'] = response.xpath(
+                    ".//*[@id='react-project-header']/div/div/div[1]/div[2]/div[2]/div[2]/div/span/text()").extract()
+                item['image'] = response.xpath(".//*[@id='react-campaign']/descendant::img/@src").extract()
+                item['video'] = response.xpath(".//*/descendant::video/source/@src").extract()
 
                 item['creator_url'] = item['link'] + '/creator_bio'
                 creatorurl = item['creator_url']
@@ -108,8 +98,6 @@ class KickSpider(scrapy.Spider):
                 item['json_url'] = item['link']  + '/stats.json?v=1'
                 if item['community_url'] is None:
                     item['community_url'] = ['None']
-                item['image'] = response.xpath(".//*[@id='react-campaign']/descendant::img/@src").extract()
-                item['video'] = response.xpath(".//*[@id='react-campaign']/descendant::video/source/@src").extract()
                 item['pledge_money'] = response.xpath(
                     ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[2]/div/ol/li/div[2]/h2/span[1]/text()").extract()
                 # item['pledge_name'] = response.xpath(
@@ -204,14 +192,16 @@ class KickSpider(scrapy.Spider):
             if not item['end_date']:
                 item['end_date'] = 'None'
 
-            item['pledged'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/h3/span/text())").extract()
+            item['pledged'] = response.xpath(
+                "normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/h3/span/text())").extract()
             if not item['pledged']:
                 item['pledged'] = ['None']
-            item['goal'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/div/span/text()").extract()
+            item['goal'] = response.xpath(
+                ".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[1]/div/span/text()").extract()
             if not item['goal']:
                 item['goal'] = ['None']
-            item['backers_count'] = response.xpath("normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[2]/h3/text())").extract()
-
+            item['backers_count'] = response.xpath(
+                "normalize-space(.//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[1]/div/div/div[2]/div[2]/h3/text())").extract()
             item['creator_url'] = response.xpath(".//*[@id='content-wrap']/section/div[3]/div[2]/div/div[2]/div/div[2]/div[1]/div/div[2]/div[1]/a/@href").extract()[0]
             creatorurl = 'https://www.kickstarter.com/' + item['creator_url']
             item['faq_url'] = response.xpath(".//*[@id='faq-emoji']/@href").extract()[0]
@@ -223,7 +213,7 @@ class KickSpider(scrapy.Spider):
             if item['community_url'] is None:
                 item['community_url'] = ['None']
             item['image'] = response.xpath(".//*[@id='react-campaign']/descendant::img/@src").extract()
-            item['video'] = response.xpath(".//*[@id='react-campaign']/descendant::video/source/@src").extract()
+            item['video'] = response.xpath(".//*/descendant::video/source/@src").extract()
 
             item['pledge_money'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/h2/span[1]/text()").extract()
             # item['pledge_name'] = response.xpath(".//*[@id='content-wrap']/div[2]/section[1]/div/div/div/div[2]/div/div[1]/div/ol/li/div[2]/h3/text()").extract()
@@ -344,27 +334,32 @@ class KickSpider(scrapy.Spider):
         item['updates_count'] = response.xpath(".//*[@id='updates-emoji']/span/text()").extract()
         hearts = []
         content = []
-        title =[]
+        title = []
         date = []
         creator = []
         comments = []
         for sel in response.xpath(".//*[@id='project-post-interface']/div/div/div/div"):
-            number = sel.xpath("div[2]/div/article/header/div[1]/div/span[1]/text()|a/div/article/header/div[1]/div/span/text()").extract()
-            if len(number) !=0:
+            number = sel.xpath(
+                "div[2]/div/article/header/div[1]/div/span[1]/text()|a/div/article/header/div[1]/div/span/text()").extract()
+            if len(number) != 0:
                 if 'Update' in number[0]:
                     con = sel.xpath("string(.//div[@class='rte__content']/div)").extract()
                     if con == ['']:
                         con = sel.xpath("div[2]/div/article/div/h3/text()").extract()
                     tit = sel.xpath("a/div/article/header/h2/text()|div[2]/div/article/header/h2/text()").extract()
-                    dat = sel.xpath("a/div/article/header/div[2]/div[2]/span/text()|div[2]/div/article/header/div[2]/div[2]/span/text()").extract()
-                    creat = sel.xpath("a/div/article/header/div[2]/div[2]/div/text()|div[2]/div/article/header/div[2]/div[2]/div/text()").extract()
-                    heart = sel.xpath("a/div/article/footer/div/div/span[2]/text()|div[2]/div/article/footer/div/div/span[2]/text()").extract()
-                    if len(heart )==0:
+                    dat = sel.xpath(
+                        "a/div/article/header/div[2]/div[2]/span/text()|div[2]/div/article/header/div[2]/div[2]/span/text()").extract()
+                    creat = sel.xpath(
+                        "a/div/article/header/div[2]/div[2]/div/text()|div[2]/div/article/header/div[2]/div[2]/div/text()").extract()
+                    heart = sel.xpath(
+                        "a/div/article/footer/div/div/span[2]/text()|div[2]/div/article/footer/div/div/span[2]/text()").extract()
+                    if len(heart) == 0:
                         heart = ['0']
                     else:
                         pass
-                    comment= sel.xpath("a/div/article/footer/div/div/span[1]/text()|div[2]/div/article/footer/div/div/span[1]/text()").extract()
-                    if len(comment)==0:
+                    comment = sel.xpath(
+                        "a/div/article/footer/div/div/span[1]/text()|div[2]/div/article/footer/div/div/span[1]/text()").extract()
+                    if len(comment) == 0:
                         comment = ['0']
                     else:
                         pass
@@ -414,8 +409,30 @@ class KickSpider(scrapy.Spider):
                     tit = ['Canceled']
                     dat = ['Canceled']
                     nam = ['Canceled']
+                    reply_content = []
+                    reply_title = []
+                    reply_date = []
+                    reply_name = []
+                    if len(sel.xpath("div[2]/ul/li/div").extract()) != 0:
+                        for reply in sel.xpath("div[2]/ul/li/div"):
+                            if reply.xpath("p/a/text()").extract() == ['Show the comment.']:
+                                reply_nam = ['Canceled']
+                                reply_tit = ['Canceled']
+                                reply_dat = ['Canceled']
+                                reply_con = ['Canceled']
+                            else:
+                                reply_nam = reply.xpath("div[1]/div/div/span[1]/text()").extract()
+                                reply_tit = reply.xpath("div[1]/div/div/span[2]/span/text()").extract()
+                                if reply_tit == []:
+                                    reply_tit = ['None']
+                                reply_dat = reply.xpath("div[1]/div/div/a/time/text()").extract()
+                                reply_con = reply.xpath("string(div[2]/div)").extract()
+                            reply_content.append(reply_con)
+                            reply_title.append(reply_tit)
+                            reply_date.append(reply_dat)
+                            reply_name.append(reply_nam)
                 else:
-                    con = sel.xpath("string(div/div[2]/div/p)").extract()
+                    con = sel.xpath("string(div/div[2]/div)").extract()
 
                     tit = sel.xpath("div/div[1]/div/div/span[2]/span/text()").extract()
                     if tit == []:
@@ -429,7 +446,7 @@ class KickSpider(scrapy.Spider):
                     reply_title = []
                     reply_date = []
                     reply_name = []
-                    if len(sel.xpath("div[2]/ul/li/div").extract())!=0:
+                    if len(sel.xpath("div[2]/ul/li/div").extract()) != 0:
                         for reply in sel.xpath("div[2]/ul/li/div"):
                             if reply.xpath("p/a/text()").extract() == ['Show the comment.']:
                                 reply_nam = ['Canceled']
@@ -442,7 +459,7 @@ class KickSpider(scrapy.Spider):
                                 if reply_tit == []:
                                     reply_tit = ['None']
                                 reply_dat = reply.xpath("div[1]/div/div/a/time/text()").extract()
-                                reply_con = reply.xpath("string(div[2]/div/p)").extract()
+                                reply_con = reply.xpath("string(div[2]/div)").extract()
                             reply_content.append(reply_con)
                             reply_title.append(reply_tit)
                             reply_date.append(reply_dat)
